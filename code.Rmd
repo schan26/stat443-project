@@ -1,13 +1,31 @@
 ---
-title: "code"
-output: html_notebook
+title: "STAT443 Project"
+output: html_document
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+# Wrangling
 
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+```{r wrangling}
+indpro <- read.csv("data/INDPRO.csv")
+yield_curve <- read.csv("data/T10Y2Y.csv")
+cpi <- read.csv("data/CPI.csv", skip = 11)
+vix <- read.csv("data/VIXCLS.csv")
+sp500 <- read.csv("data/S&P 500.csv")
 
-```{r}
-plot(cars)
-#testing push function
+# change data type of observation_date 
+indpro$observation_date <- as.Date(indpro$observation_date)
+yield_curve$observation_date <- as.Date(yield_curve$observation_date)
+vix$observation_date <- as.Date(vix$observation_date)
+sp500$Date <- as.Date(sp500$Date)
+
 ```
+
+
+```{r dataset visual}
+tail(cpi)
+tail(indpro)
+tail(yield_curve)
+tail(vix)
+tail(sp500)
+```
+
