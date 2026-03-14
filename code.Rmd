@@ -12,3 +12,4 @@ plot(cars)
 ```
 
 
+print("Hi")
