@@ -5,7 +5,8 @@ output: html_document
 
 # Wrangling
 
-```{r wrangling}
+```{r load data}
+
 indpro <- read.csv("data/INDPRO.csv")
 yield_curve <- read.csv("data/T10Y2Y.csv")
 cpi <- read.csv("data/CPI.csv", skip = 11)
