@@ -18,7 +18,7 @@ indpro <- read.csv("data/raw/INDPRO.csv")
 yield_curve <- read.csv("data/raw/T10Y2Y.csv")
 cpi <- read.csv("data/raw/CPI.csv", skip = 11)
 vix <- read.csv("data/raw/VIXCLS.csv")
-sp500 <- rename(read.csv("data/raw/S&P 500.csv"), observation_date = Date, sp500 = Price)[,c("observation_date","sp500")]
+sp500 <- rename(read.csv("data/raw/S&P 500.csv"), observation_date = Date, sp500_ret = Change..)[,c("observation_date","sp500_ret")]
 
 # change data type of observation_date 
 indpro$observation_date <- as.Date(indpro$observation_date)
@@ -48,5 +48,7 @@ merged_data <- cpi %>%
   inner_join(yield_curve, by = "observation_date") %>%
   inner_join(indpro, by = "observation_date") %>%
   inner_join(sp500, by = "observation_date")
+
+#2 CPI values in 2025 are missing due to the 2025 lapse in appropriations, no other issues found
 
 
