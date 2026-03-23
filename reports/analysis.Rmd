@@ -1,0 +1,7 @@
+---
+title: "STAT443 Project - Analysis"
+output: pdf_document
+---
+
+## EDA
+
