@@ -37,6 +37,7 @@ iid_fc <- function(train, holdout, iprint = FALSE) {
   return(list(rmse = sqrt(sse / n_holdout), fc = fc_vec))
 }
 
+merged_data <- read.csv("data/processed/cleanedData.csv")
 
 train = ts(as.numeric(sub("%","",merged_data$sp500_ret)), start = c(1990,2), end = c(2017,1), frequency = 1)
 acf(train)
