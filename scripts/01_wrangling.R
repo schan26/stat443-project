@@ -43,7 +43,7 @@ cpi$observation_date <- paste0(cpi$Year,"-",cpi$month, "-01") #assign default da
 cpi <- cpi[,c("observation_date","CPI")]
 cpi$observation_date = as.Date(cpi$observation_date, format = "%Y-%b-%d")
 
-#Join multiple dataframes
+#Join multiple data-frames
 merged_data <- cpi %>%
   inner_join(vix, by = "observation_date") %>%
   inner_join(yield_curve, by = "observation_date") %>%
