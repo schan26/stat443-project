@@ -39,9 +39,11 @@ iid_fc <- function(train, holdout, iprint = FALSE) {
 
 merged_data <- read.csv("data/processed/cleanedData.csv")
 
-train = ts(as.numeric(sub("%","",merged_data$sp500_ret)), start = c(1990,2), end = c(2017,1), frequency = 1)
-acf(train)
-pacf(train)
+train = ts(merged_data$sp500_ret, start = c(1990,2), end = c(2015,4), frequency = 1)
+holdout = ts(merged_data$sp500_ret, start = c(2015,5), frequency = 1)
+
+persist_results = persist_fc(train, holdout)
+iid_results = iid_fc(train, holdout)
 
 auto.arima(train,stationary = T, seasonal = F, stepwise = F)
 
