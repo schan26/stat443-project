@@ -7,7 +7,9 @@ fill_missing_values <- function(df, date_col = "observation_date") {
   all_dates <- data.frame(observation_date = seq(min(df[[date_col]]), max(df[[date_col]]), by = "day"))
   
   df <- df %>%
-    full_join(all_dates, by = "observation_date")
+    full_join(all_dates, by = "observation_date") %>%
+    arrange(observation_date)
+  
   df <- fill(df, -observation_date, .direction = "down")
   
   return(df)
@@ -42,6 +44,9 @@ cpi <- pivot_longer(cpi, cols = Jan:Dec, names_to = "month", values_to = "CPI") 
 cpi$observation_date <- paste0(cpi$Year,"-",cpi$month, "-01") #assign default date to be the first of every month
 cpi <- cpi[,c("observation_date","CPI")]
 cpi$observation_date = as.Date(cpi$observation_date, format = "%Y-%b-%d")
+
+#Format return column in sp500 data
+sp500$sp500_ret = as.numeric(sub("%","",sp500$sp500_ret))
 
 #Join multiple data-frames
 merged_data <- cpi %>%
