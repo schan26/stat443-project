@@ -58,6 +58,8 @@ merged_data <- cpi %>%
   inner_join(silver, by = "observation_date") %>%
   inner_join(copper, by = "observation_date")
 
+merged_data$observation_date = format(merged_data$observation_date, "%Y-%m")
+
 #2 CPI values in 2025 are missing due to the 2025 lapse in appropriations, no other issues found
 write.csv(merged_data, file = "data/processed/cleanedData.csv")
 
