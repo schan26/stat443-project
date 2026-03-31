@@ -125,5 +125,16 @@ arma_alt5_results = arima_fc(data_ts,length(train),c(2,0,0),c(0,0,0),"ML",alt_ar
 
 #Model fitted by auto.arima, which is white noise, outperforms alternate models on both AIC and holdout-set RMSE.
 
+#ARMAX
+
+var2_ts = ts(data$CPI, start = c(1990,2), frequency = 12)
+#var2_pct_change <- diff(log(var2_ts))
+var2_train = window(var2_ts, start = c(1990,2), end = c(2015,4))
+
+ccf(as.numeric(var2_train),as.numeric(ts(train[1:303],start = c(1990,2), frequency = 12)), main = "CPI & SP500", ylab = "CCF")
+
+
+
+
 
 
