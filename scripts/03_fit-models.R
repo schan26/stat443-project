@@ -127,43 +127,44 @@ arma_alt5_results = arima_fc(data_ts,length(train),c(2,0,0),c(0,0,0),"ML",alt_ar
 
 #ARMAX
 
-#var2_ts = ts(data$CPI, start = c(1990,2), frequency = 12)
-#var2_pct_change <- diff(log(var2_ts))
-#var2_train = window(var2_ts, start = c(1990,2), end = c(2015,4))
-
-#ccf(as.numeric(var2_train),as.numeric(ts(train[1:303],start = c(1990,2), frequency = 12)), main = "CPI & SP500", ylab = "CCF")
-
-#VIX forecasting - ARMA
+#VIX forecasting - ESM
 vix_ts = ts(data$VIXCLS, start = c(1990,2), frequency = 12)
-vix_pct = diff(log(vix_ts))
-vix_train = window(vix_pct, start = c(1990,2), end = c(2015,4))
-vix_holdout = window(vix_pct, start = c(2015,5))
+vix_pct = as.numeric(diff(log(vix_ts)))
+vix_pct_ts = ts(vix_pct, start = c(1990,2), frequency = 12)
+
+vix_train = window(vix_pct_ts, start = c(1990,2), end = c(2015,4))
+vix_holdout = window(vix_pct_ts, start = c(2015,5))
 
 vix_model =  HoltWinters(vix_train, beta = F, gamma = F)
 vix_results = esm_fc(vix_train, vix_holdout, vix_model$alpha, vix_model$coefficients[1])
 
 vix_fc = c(vix_model$fitted[,"xhat"],vix_results$fc)
-  
-#acf(vix_train)
-#pacf(vix_train)
 
-#vix_model = auto.arima(vix_train, stationary = T, seasonal = F)
-#vix_results = arima_fc(vix_pct,length(vix_train),c(1,0,1), seasonal = c(0,0,0), method = "ML", vix_model$coef, include.mean = F)
+#Copper forecasting - ARMA
 
-#vix_fc = c(vix_model$fitted,vix_results$fc)
+copper_ts = ts(data$Copper, start = c(1990,2), frequency = 12)
+copper_pct = as.numeric(diff(log(copper_ts)))
+copper_pct_ts = ts(copper_pct, start = c(1990,2), frequency = 12)
+
+copper_train = window(copper_pct_ts, start = c(1990,2), end = c(2015,4))
+copper_holdout = window(copper_pct_ts, start = c(2015,5))
+
+copper_model =  auto.arima(copper_train, stationary = T, seasonal = F)
+copper_results = arima_fc(copper_pct_ts,length(copper_train),c(1,0,0),c(0,0,0),"ML",copper_model$coef,include.mean = F)
+
+copper_fc = c(copper_model[["fitted"]], copper_results$fc)
 
 #ARMAX set up
 ntotal = nrow(data)
 
-df = data.frame(indpro_prev2 = diff(log(data$INDPRO))[1:(ntotal-3)], 
-                silver_prev = diff(log(data$Silver))[2:(ntotal-2)], 
-                vix_fc = vix_fc[2:(ntotal-2)],
-                sp500_ret = data$sp500_ret[3:(ntotal-1)]
+df = data.frame(vix_fc = vix_fc[1:(ntotal-2)],
+                copper_fc = copper_fc[1:(ntotal-2)],
+                sp500_ret = data$sp500_ret[2:(ntotal-1)]
                 )
 
 ntrain = floor(nrow(df) * 0.7)
 
-reg = lm(sp500_ret ~ indpro_prev2 + silver_prev + vix_fc, data = df[1:ntrain,])
+reg = lm(sp500_ret ~ vix_fc + copper_fc, data = df[1:ntrain,])
 print(summary(reg))
 
 acf(reg$residuals)
