@@ -86,12 +86,16 @@ arima_fc = function(tsdata,ntrain,order,seasonal,method,traincoef,include.mean,
   return(list(rmse=rmse, fc=holdout_fc))
 }
 
-
 data <- read.csv("data/processed/cleanedData.csv")
-data_ts <- ts(data$sp500_ret, start = c(1990,2), frequency = 12)
+data_ts <- ts(data$sp500_ret, start = data_start, frequency = 12)
 
-train = window(data_ts, start = c(1990,2), end = c(2015,4)) #train data from 1990-02 to 2015-04
-holdout = window(data_ts, start = c(2015,5)) #holdout data from 2015-05 onwards
+ntrain = ceiling(nrow(data)*0.7)
+data_start = c(1990,2)
+train_end = c(2015,4)
+holdout_start = c(2015,5)
+
+train = window(data_ts, start = data_start, end = train_end) #train data from 1990-02 to 2015-04
+holdout = window(data_ts, start = holdout_start) #holdout data from 2015-05 onwards
 
 #Baseline methods - Persistence and IID
 persist_results = persist_fc(train, holdout)
@@ -127,44 +131,44 @@ arma_alt5_results = arima_fc(data_ts,length(train),c(2,0,0),c(0,0,0),"ML",alt_ar
 
 #ARMAX
 
-#VIX forecasting - ESM
-vix_ts = ts(data$VIXCLS, start = c(1990,2), frequency = 12)
-vix_pct = as.numeric(diff(log(vix_ts)))
-vix_pct_ts = ts(vix_pct, start = c(1990,2), frequency = 12)
+#BAA forecasting - ARMA
+BAA_ts = ts(diff(data$BAA10YM), start = data_start, frequency = 12)
+BAA_train = window(BAA_ts, start = data_start, end = train_end)
+BAA_holdout = window(BAA_ts, start = holdout_start)
 
-vix_train = window(vix_pct_ts, start = c(1990,2), end = c(2015,4))
-vix_holdout = window(vix_pct_ts, start = c(2015,5))
+ccf(BAA_train,train)
+
+acf(BAA_train)
+pacf(BAA_train)
+
+BAA_model = auto.arima(BAA_train, stationary = T, seasonal = F)
+BAA_results = arima_fc(BAA_ts,length(BAA_train),c(2,0,1),c(0,0,0),"ML",BAA_model$coef,include.mean = F)
+
+BAA_fc <- c(BAA_train,BAA_results$fc)
+
+#VIX forecasting - ESM
+vix_ts = ts(data$VIXCLS, start = data_start, frequency = 12)
+vix_pct = as.numeric(diff(log(vix_ts)))
+vix_pct_ts = ts(vix_pct, start = data_start, frequency = 12)
+
+vix_train = window(vix_pct_ts, start = data_start, end = train_end)
+vix_holdout = window(vix_pct_ts, start = holdout_start)
 
 vix_model =  HoltWinters(vix_train, beta = F, gamma = F)
 vix_results = esm_fc(vix_train, vix_holdout, vix_model$alpha, vix_model$coefficients[1])
 
-vix_fc = c(vix_model$fitted[,"xhat"],vix_results$fc)
-
-#Copper forecasting - ARMA
-
-copper_ts = ts(data$Copper, start = c(1990,2), frequency = 12)
-copper_pct = as.numeric(diff(log(copper_ts)))
-copper_pct_ts = ts(copper_pct, start = c(1990,2), frequency = 12)
-
-copper_train = window(copper_pct_ts, start = c(1990,2), end = c(2015,4))
-copper_holdout = window(copper_pct_ts, start = c(2015,5))
-
-copper_model =  auto.arima(copper_train, stationary = T, seasonal = F)
-copper_results = arima_fc(copper_pct_ts,length(copper_train),c(1,0,0),c(0,0,0),"ML",copper_model$coef,include.mean = F)
-
-copper_fc = c(copper_model[["fitted"]], copper_results$fc)
+vix_fc = c(vix_train,vix_results$fc)
 
 #ARMAX set up
-ntotal = nrow(data)
+ntotal = nrow(data) #This equals 432
 
-df = data.frame(vix_fc = vix_fc[1:(ntotal-2)],
-                copper_fc = copper_fc[1:(ntotal-2)],
-                sp500_ret = data$sp500_ret[2:(ntotal-1)]
+df = data.frame(vix_fc = vix_fc[1:(ntotal-1)],
+                sp500_ret = data$sp500_ret[1:(ntotal-1)],
+                BAA_fc = BAA_fc[1:(ntotal-1)]
+                
                 )
 
-ntrain = floor(nrow(df) * 0.7)
-
-reg = lm(sp500_ret ~ vix_fc + copper_fc, data = df[1:ntrain,])
+reg = lm(sp500_ret ~ vix_fc + BAA_fc, data = df[1:ntrain,])
 print(summary(reg))
 
 acf(reg$residuals)

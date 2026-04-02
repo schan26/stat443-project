@@ -24,6 +24,7 @@ sp500 <- rename(read.csv("data/raw/S&P 500.csv"), observation_date = Date, sp500
 gold <- rename(read.csv("data/raw/Gold.csv"), observation_date = Date, Gold = Value)
 silver <- rename(read.csv("data/raw/Silver.csv"), observation_date = Date, Silver = Value)
 copper <- rename(read.csv("data/raw/Copper.csv"), observation_date = Date, Copper = Value)
+BAA10Y <- read.csv("data/raw/BAA10YM.csv")
 
 # change data type of observation_date 
 indpro$observation_date <- as.Date(indpro$observation_date)
@@ -33,6 +34,8 @@ sp500$observation_date <- as.Date(sp500$observation_date)
 gold$observation_date <- as.Date(gold$observation_date, format = "%m/%d/%Y")
 silver$observation_date <- as.Date(silver$observation_date, format = "%m/%d/%Y")
 copper$observation_date <- as.Date(copper$observation_date, format = "%m/%d/%Y")
+BAA10Y$observation_date <- as.Date(BAA10Y$observation_date)
+
 
 #Apply fill_missing_values function to daily data-sets only
 vix <- fill_missing_values(vix)
@@ -45,7 +48,7 @@ cpi$observation_date <- paste0(cpi$Year,"-",cpi$month, "-01") #assign default da
 cpi <- cpi[,c("observation_date","CPI")]
 cpi$observation_date = as.Date(cpi$observation_date, format = "%Y-%b-%d")
 
-#Format return column in sp500 data
+#Format return column in SP500 data
 sp500$sp500_ret = as.numeric(sub("%","",sp500$sp500_ret))
 
 #Join multiple data-frames
@@ -56,7 +59,9 @@ merged_data <- cpi %>%
   inner_join(sp500, by = "observation_date") %>%
   inner_join(gold, by = "observation_date") %>%
   inner_join(silver, by = "observation_date") %>%
-  inner_join(copper, by = "observation_date")
+  inner_join(copper, by = "observation_date") %>%
+  inner_join(BAA10Y, by = "observation_date") %>%
+
 
 merged_data$observation_date = format(merged_data$observation_date, "%Y-%m")
 
