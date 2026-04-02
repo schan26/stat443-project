@@ -86,11 +86,12 @@ arima_fc = function(tsdata,ntrain,order,seasonal,method,traincoef,include.mean,
   return(list(rmse=rmse, fc=holdout_fc))
 }
 
+data_start = c(1990,2)
+
 data <- read.csv("data/processed/cleanedData.csv")
 data_ts <- ts(data$sp500_ret, start = data_start, frequency = 12)
 
 ntrain = ceiling(nrow(data)*0.7)
-data_start = c(1990,2)
 train_end = c(2015,4)
 holdout_start = c(2015,5)
 
@@ -146,16 +147,21 @@ BAA_results = arima_fc(BAA_ts,length(BAA_train),c(2,0,1),c(0,0,0),"ML",BAA_model
 
 BAA_fc <- c(BAA_train,BAA_results$fc)
 
-#VIX forecasting - ESM
+#VIX forecasting - ARMA
 vix_ts = ts(data$VIXCLS, start = data_start, frequency = 12)
-vix_pct = as.numeric(diff(log(vix_ts)))
-vix_pct_ts = ts(vix_pct, start = data_start, frequency = 12)
+vix_diff = as.numeric(diff(vix_ts))
+vix_diff_ts = ts(vix_diff, start = data_start, frequency = 12)
 
-vix_train = window(vix_pct_ts, start = data_start, end = train_end)
-vix_holdout = window(vix_pct_ts, start = holdout_start)
+vix_train = window(vix_diff_ts, start = data_start, end = train_end)
+vix_holdout = window(vix_diff_ts, start = holdout_start)
 
-vix_model =  HoltWinters(vix_train, beta = F, gamma = F)
-vix_results = esm_fc(vix_train, vix_holdout, vix_model$alpha, vix_model$coefficients[1])
+acf(vix_train)
+pacf(vix_train)
+
+ccf(vix_train,train)
+
+vix_model = auto.arima(vix_train, stationary = T, seasonal = F)
+vix_results = arima_fc(vix_diff_ts,length(vix_train),c(0,0,3),c(0,0,0),"ML",vix_model$coef,include.mean = F)
 
 vix_fc = c(vix_train,vix_results$fc)
 
@@ -164,9 +170,7 @@ ntotal = nrow(data) #This equals 432
 
 df = data.frame(vix_fc = vix_fc[1:(ntotal-1)],
                 sp500_ret = data$sp500_ret[1:(ntotal-1)],
-                BAA_fc = BAA_fc[1:(ntotal-1)]
-                
-                )
+                BAA_fc = BAA_fc[1:(ntotal-1)])
 
 reg = lm(sp500_ret ~ vix_fc + BAA_fc, data = df[1:ntrain,])
 print(summary(reg))

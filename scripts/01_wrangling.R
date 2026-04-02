@@ -60,7 +60,7 @@ merged_data <- cpi %>%
   inner_join(gold, by = "observation_date") %>%
   inner_join(silver, by = "observation_date") %>%
   inner_join(copper, by = "observation_date") %>%
-  inner_join(BAA10Y, by = "observation_date") %>%
+  inner_join(BAA10Y, by = "observation_date")
 
 
 merged_data$observation_date = format(merged_data$observation_date, "%Y-%m")
