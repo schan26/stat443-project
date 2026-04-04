@@ -123,11 +123,11 @@ alt_arma002 = arima(train,order = c(0,0,2))
 alt_arma100 = arima(train,order = c(1,0,0))
 alt_arma200 = arima(train,order = c(2,0,0))
 
-arma_alt101_results = arima_fc(data_ts,length(train),c(1,0,1),c(0,0,0),"ML",alt_arma1$coef,include.mean = T)
-arma_alt001_results = arima_fc(data_ts,length(train),c(0,0,1),c(0,0,0),"ML",alt_arma2$coef,include.mean = T)
-arma_alt002_results = arima_fc(data_ts,length(train),c(0,0,2),c(0,0,0),"ML",alt_arma3$coef,include.mean = T)
-arma_alt100_results = arima_fc(data_ts,length(train),c(1,0,0),c(0,0,0),"ML",alt_arma4$coef,include.mean = T)
-arma_alt200_results = arima_fc(data_ts,length(train),c(2,0,0),c(0,0,0),"ML",alt_arma5$coef,include.mean = T)
+arma_alt101_results = arima_fc(data_ts,length(train),c(1,0,1),c(0,0,0),"ML",alt_arma101$coef,include.mean = T)
+arma_alt001_results = arima_fc(data_ts,length(train),c(0,0,1),c(0,0,0),"ML",alt_arma001$coef,include.mean = T)
+arma_alt002_results = arima_fc(data_ts,length(train),c(0,0,2),c(0,0,0),"ML",alt_arma002$coef,include.mean = T)
+arma_alt100_results = arima_fc(data_ts,length(train),c(1,0,0),c(0,0,0),"ML",alt_arma100$coef,include.mean = T)
+arma_alt200_results = arima_fc(data_ts,length(train),c(2,0,0),c(0,0,0),"ML",alt_arma200$coef,include.mean = T)
 
 #Model fitted by auto.arima, which is white noise, outperforms alternate models on both AIC and holdout-set RMSE.
 
