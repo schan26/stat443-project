@@ -2,7 +2,7 @@ train_end   <- c(2015, 4)
 holdout_start <- c(2015, 5)
 
 data <- read.csv("data/processed/cleanedData.csv")
-data_ts <- ts(data$sp500_ret, start = data_start, frequency = 12)
+data_ts <- ts(data$sp500_ret, start = c(1990,2), frequency = 12)
 
 train   <- window(data_ts, start = c(1990,2), end = train_end)
 holdout <- window(data_ts, start = holdout_start)
