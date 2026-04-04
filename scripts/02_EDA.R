@@ -2,6 +2,10 @@ train_end   <- c(2015, 4)
 holdout_start <- c(2015, 5)
 
 data <- read.csv("data/processed/cleanedData.csv")
+
+# FIX: Parse "YYYY-MM" dates by appending "-01" so as.Date() can read them
+data$observation_date <- as.Date(paste0(data$observation_date, "-01"))
+
 data_ts <- ts(data$sp500_ret, start = c(1990,2), frequency = 12)
 
 train   <- window(data_ts, start = c(1990,2), end = train_end)
@@ -16,7 +20,8 @@ vars <- c("CPI", "VIXCLS", "T10Y2Y", "INDPRO", "sp500_ret", "Gold", "Silver")
 par(mfrow = c(2, 2))
 
 for (v in vars) {
-  x     <- na.omit(train_data[[v]])
+  # FIX: Use train_data instead of train (since train is a ts object)
+  x     <- na.omit(train_data[[v]]) 
   dates <- train_data$observation_date[!is.na(train_data[[v]])]
   
   plot(dates, x,
@@ -148,6 +153,7 @@ for (v in predictors) {
   
   if (v %in% non_stationary_vars) {
     x             <- diff(x)
+    # FIX: Drop first element to align lengths instead of double differencing returns
     sp500_aligned <- sp500_train[-1]
     label         <- paste0("diff(", v, ")")
   } else {
@@ -169,10 +175,11 @@ par(mfrow = c(1, 1))
 
 # ── CCF log-diff(VIXCLS) vs SP500 ────────────────────────────────────────────
 d1 <- na.omit(train_data[, c("observation_date", "VIXCLS", "sp500_ret")])
-d1 <- d1[order(as.Date(d1$observation_date)), ]
+d1 <- d1[order(d1$observation_date), ]
 
 vix_ld <- diff(log(d1$VIXCLS))
-sp1    <- diff(d1$sp500_ret)
+# FIX: Align index without double-differencing S&P 500 returns
+sp1    <- d1$sp500_ret[-1] 
 min1   <- min(length(vix_ld), length(sp1))
 
 ccf(tail(vix_ld, min1), tail(sp1, min1),
@@ -183,10 +190,11 @@ ccf(tail(vix_ld, min1), tail(sp1, min1),
 
 # ── CCF log-diff(INDPRO) vs SP500 ────────────────────────────────────────────
 d2 <- na.omit(train_data[, c("observation_date", "INDPRO", "sp500_ret")])
-d2 <- d2[order(as.Date(d2$observation_date)), ]
+d2 <- d2[order(d2$observation_date), ]
 
 indpro_ld <- diff(log(d2$INDPRO))
-sp2       <- diff(d2$sp500_ret)
+# FIX: Align index without double-differencing S&P 500 returns
+sp2       <- d2$sp500_ret[-1]
 min2      <- min(length(indpro_ld), length(sp2))
 
 ccf(tail(indpro_ld, min2), tail(sp2, min2),
@@ -196,4 +204,3 @@ ccf(tail(indpro_ld, min2), tail(sp2, min2),
     col = "steelblue", lwd = 2, ci.col = "firebrick")
 
 par(mfrow = c(1, 1))
-
