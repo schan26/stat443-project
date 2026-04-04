@@ -129,7 +129,7 @@ for (v in vars) {
           xlab = "Lag (months)", ylab = "variogram",
           main = paste("Variogram —", v))
   
-  abline(h = 1, col = "red", lty = 2, lwd = 1.5)
+  abline(h = 1, col = "blue", lty = 2, lwd = 1.5)
   
   legend("bottomright",
          legend = c("G", "H"),
@@ -199,7 +199,7 @@ if (!dir.exists("figs/ccf")) {
 
 predictors <- c("CPI", "INDPRO")
 for (v in predictors) {
-  png(paste("figs/ccf/", v, "_ccf.png"), width = 800, height = 600)
+  png(paste0("figs/ccf/", v, "_ccf.png"), width = 800, height = 600)
   x <- na.omit(train_data[[v]])
   
     if (v == "INDPRO") {
