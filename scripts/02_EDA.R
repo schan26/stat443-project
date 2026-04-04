@@ -17,6 +17,16 @@ train_data <- data[1:length(train),]
 vars <- c("CPI", "VIXCLS", "T10Y2Y", "INDPRO", "sp500_ret", "Gold", "Silver")
 
 # ── Time series plots ──────────────────────────────────────────────────────────
+
+png("figs/sp500_tsplot.png", width = 800, height = 600)
+plot(dates, na.omit(train_data[["sp500_ret"]]) ,
+     type = "l", lwd = 1.5,
+     xlab = "Date", ylab = v,
+     main = paste("Time Series —", v))
+
+abline(h = mean(x), col = "red", lty = 2, lwd = 1)
+dev.off()
+
 par(mfrow = c(2, 2))
 
 for (v in vars) {
