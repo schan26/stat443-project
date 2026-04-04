@@ -117,18 +117,17 @@ arma_model = auto.arima(train, stationary = T, seasonal = F)
 arma_results = arima_fc(data_ts,length(train),c(0,0,0),c(0,0,0),"ML",arma_model$coef,include.mean = T)
 
 #Vary P and Q a little and compare AIC and holdout set RMSE
-alt_arma1 = arima(train,order = c(1,0,1))
-alt_arma2 = arima(train,order = c(0,0,1))
-alt_arma3 = arima(train,order = c(0,0,2))
-alt_arma4 = arima(train,order = c(1,0,0))
-alt_arma5 = arima(train,order = c(2,0,0))
+alt_arma101 = arima(train,order = c(1,0,1))
+alt_arma001 = arima(train,order = c(0,0,1))
+alt_arma002 = arima(train,order = c(0,0,2))
+alt_arma100 = arima(train,order = c(1,0,0))
+alt_arma200 = arima(train,order = c(2,0,0))
 
-arma_alt1_results = arima_fc(data_ts,length(train),c(1,0,1),c(0,0,0),"ML",alt_arma1$coef,include.mean = T)
-arma_alt2_results = arima_fc(data_ts,length(train),c(0,0,1),c(0,0,0),"ML",alt_arma2$coef,include.mean = T)
-arma_alt3_results = arima_fc(data_ts,length(train),c(0,0,2),c(0,0,0),"ML",alt_arma3$coef,include.mean = T)
-arma_alt4_results = arima_fc(data_ts,length(train),c(1,0,0),c(0,0,0),"ML",alt_arma4$coef,include.mean = T)
-arma_alt5_results = arima_fc(data_ts,length(train),c(2,0,0),c(0,0,0),"ML",alt_arma5$coef,include.mean = T)
-
+arma_alt101_results = arima_fc(data_ts,length(train),c(1,0,1),c(0,0,0),"ML",alt_arma1$coef,include.mean = T)
+arma_alt001_results = arima_fc(data_ts,length(train),c(0,0,1),c(0,0,0),"ML",alt_arma2$coef,include.mean = T)
+arma_alt002_results = arima_fc(data_ts,length(train),c(0,0,2),c(0,0,0),"ML",alt_arma3$coef,include.mean = T)
+arma_alt100_results = arima_fc(data_ts,length(train),c(1,0,0),c(0,0,0),"ML",alt_arma4$coef,include.mean = T)
+arma_alt200_results = arima_fc(data_ts,length(train),c(2,0,0),c(0,0,0),"ML",alt_arma5$coef,include.mean = T)
 
 #Model fitted by auto.arima, which is white noise, outperforms alternate models on both AIC and holdout-set RMSE.
 
@@ -197,5 +196,5 @@ fc_table = cbind(data$sp500_ret[(ntrain+1):(ntotal-1)],iid_results$fc[1:(nholdou
 colnames(fc_table) = c("holdout","iid_fc","persist_fc","esm_fc","lholt_fc","arma_fc","armax_fc")
 rownames(fc_table) = data$observation_date[(ntrain+1):(ntotal-1)]
 
-
+#pairs(cbind(iid_results$fc,esm_results$fc))
 
