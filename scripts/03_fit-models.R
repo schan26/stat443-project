@@ -186,7 +186,8 @@ pred_reg = predict(reg, df[(ntrain+1):nrow(df),])
 rmse_reg = sqrt(mean((df$sp500_ret[(ntrain+1):nrow(df)] - pred_reg)^2))
 
 #Initially, the focus was on finding leading predictors but most predictors had either a weak leading effect or no leading effect at all over the S&P 500, which led to a worser model. 
-#Hence, the focus shifted to finding variables that had a strong lag 0 correlation with the SP500 returns, and use the 1-step forecasts of these variables in the holdout set to build a good ARMAX model. Two such variables were VIX and Baa Corporate bond yield relative to yield on 10-Year Treasury Constant Maturity, which had moderate lag 0 correlations with the SP500 returns over the training set.
+#Hence, the focus shifted to finding variables that had a strong lag 0 correlation with the SP500 returns, and use the 1-step forecasts of these variables in the holdout set to build a good ARMAX model. 
+#Two such variables were VIX and Baa Corporate bond yield relative to yield on 10-Year Treasury Constant Maturity, which had moderate lag 0 correlations with the SP500 returns over the training set.
 
 rmse_table = cbind(iid_results$rmse, persist_results$rmse, esm_results$rmse, lholt_results$rmse, arma_results$rmse, rmse_reg)
 colnames(rmse_table) = c("iid_rmse","persist_rmse","esm_rmse","lholt_rmse","arma_rmse","armax_rmse")
