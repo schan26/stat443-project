@@ -8,7 +8,7 @@ train   <- window(data_ts, start = c(1990,2), end = train_end)
 holdout <- window(data_ts, start = holdout_start)
 
 # Subset data to training period only
-train_data <- data[data$observation_date <= as.Date("2015-04-01"), ]
+train_data <- data[1:length(train),]
 
 vars <- c("CPI", "VIXCLS", "T10Y2Y", "INDPRO", "sp500_ret", "Gold", "Silver")
 
