@@ -25,7 +25,7 @@ png("figs/ts/sp500_tsplot.png", width = 800, height = 600)
 plot(dates, na.omit(train_data[["sp500_ret"]]) ,
      type = "l", lwd = 1.5,
      xlab = "Date", ylab = "sp500_ret",
-     main = "Time Series — sp500_ret")
+     main = "Time Series — sp500_ret", cex.main = 2.5)
 
 abline(h = mean(na.omit(train_data[["sp500_ret"]])), col = "red", lty = 2, lwd = 1)
 dev.off()
@@ -42,7 +42,7 @@ for (v in vars) {
   plot(dates, x,
        type = "l", lwd = 1.5,
        xlab = "Date", ylab = v,
-       main = paste("Time Series —", v))
+       main = paste("Time Series —", v), cex.main = 2)
   
   abline(h = mean(x), col = "red", lty = 2, lwd = 1)
 }
@@ -63,10 +63,10 @@ plot_acf_pacf <- function(var_name, df, lag.max = 36) {
   par(mfrow = c(1, 2))
   
   acf(x,  lag.max = lag.max,
-      main = paste("ACF —", var_name), lwd = 2)
+      main = paste("ACF —", var_name), cex.main = 3)
   
   pacf(x, lag.max = lag.max,
-       main = paste("PACF —", var_name), lwd = 2)
+       main = paste("PACF —", var_name), cex.main = 3)
   dev.off()
 }
 
@@ -103,15 +103,18 @@ vg   <- variogram(x, lagmax = 12)
 lags <- 1:12
 
 matplot(lags, cbind(vg$G, vg$H),
-        type = "b", pch = c(16, 17), lwd = 2,
+        type = "b", pch = c(16, 17), 
+        col = c("steelblue", "darkorange"), lwd = 2.5,
         xlab = "Lag (months)", ylab = "variogram",
-        main = "Variogram — sp500_ret")
+        main = "Variogram — sp500_ret", cex.main = 2.5)
 
-abline(h = 1, col = "red", lty = 2, lwd = 1.5)
+abline(h = 1, col = "black", lty = 2, lwd = 1.5)
 
 legend("bottomright",
        legend = c("G", "H"),
-       pch = c(16, 17), lwd = 2, bty = "n")
+       col = c("steelblue", "darkorange"),
+       pch = c(16, 17), lwd = 2, bty = "n",
+       cex = 3)
 dev.off()
 
 
@@ -125,15 +128,18 @@ for (v in vars) {
   lags <- 1:12
   
   matplot(lags, cbind(vg$G, vg$H),
-          type = "b", pch = c(16, 17), lwd = 2,
+          type = "b", pch = c(16, 17), 
+          col = c("steelblue", "darkorange"), lwd = 2.5,
           xlab = "Lag (months)", ylab = "variogram",
-          main = paste("Variogram —", v))
+          main = paste("Variogram —", v), cex.main = 2.5)
   
-  abline(h = 1, col = "blue", lty = 2, lwd = 1.5)
+  abline(h = 1, col = "black", lty = 2, lwd = 1.5)
   
   legend("bottomright",
          legend = c("G", "H"),
-         pch = c(16, 17), lwd = 2, bty = "n")
+         col = c("steelblue", "darkorange"),
+         pch = c(16, 17), lwd = 2, bty = "n", 
+         cex = 3)
 }
 dev.off()
 
@@ -197,6 +203,7 @@ if (!dir.exists("figs/ccf")) {
   dir.create("figs/ccf")
 }
 
+par(mfrow = c(1, 1),cex.main = 5)
 predictors <- c("CPI", "INDPRO")
 for (v in predictors) {
   png(paste0("figs/ccf/", v, "_ccf.png"), width = 800, height = 600)
@@ -217,8 +224,8 @@ for (v in predictors) {
     sp500_aligned <- tail(sp500_aligned, min_len)
   
     ccf(x, sp500_aligned,
-        lag.max = 24, lwd = 2,
-        main = paste("CCF —", label, "vs sp500_ret"),
+        lag.max = 24,
+        main = paste("CCF —", label, "vs sp500_ret"), 
         ylab = "CCF", xlab = "Lag (months)")
     dev.off()
 }
