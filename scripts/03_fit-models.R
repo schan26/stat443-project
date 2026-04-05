@@ -1,6 +1,6 @@
 library(forecast)
 
-# fit models
+# ── Fit models ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 persist_fc <- function(train, holdout, iprint = FALSE) {
   ntrain <- length(train)
   nh <- length(holdout)
@@ -99,11 +99,11 @@ holdout_start = c(2015,5)
 train = window(data_ts, start = data_start, end = train_end) #train data from 1990-02 to 2015-04
 holdout = window(data_ts, start = holdout_start) #holdout data from 2015-05 onwards
 
-#Baseline methods - Persistence and IID
+#────── Baseline methods - Persistence and IID ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 persist_results = persist_fc(train, holdout)
 iid_results = iid_fc(train, holdout)
 
-#Exponential smoothing methods - Holt linear and simple exponential smoothing
+#────── Exponential smoothing methods - Holt linear and simple exponential smoothing ──────────────────────────────────────────────────────────────────────────────
 esm_model = HoltWinters(train, beta = F, gamma = F)
 esm_results = esm_fc(train, holdout, esm_model$alpha, esm_model$coefficients[1])
 
@@ -112,7 +112,7 @@ lholt_results = lholt_fc(train, holdout, lholt_model$alpha, lholt_model$beta, lh
 
 #Simple exponential smoothing performs better than linear Holt due to the lack of a consistent trend in the data.
 
-#ARMA
+#────── ARMA ──────────────────────────────────────────────────────────────────────────────
 arma_model = auto.arima(train, stationary = T, seasonal = F)
 arma_results = arima_fc(data_ts,length(train),c(0,0,0),c(0,0,0),"ML",arma_model$coef,include.mean = T)
 
@@ -131,7 +131,7 @@ arma_alt200_results = arima_fc(data_ts,length(train),c(2,0,0),c(0,0,0),"ML",alt_
 
 #Model fitted by auto.arima, which is white noise, outperforms alternate models on both AIC and holdout-set RMSE.
 
-#ARMAX
+#────── ARMAX ──────────────────────────────────────────────────────────────────────────────
 
 #BAA forecasting - ARMA
 BAA_ts = ts(diff(data$BAA10YM), start = data_start, frequency = 12)
@@ -184,6 +184,50 @@ pacf(reg$residuals, main = "PACF of regression residuals")
 pred_reg = predict(reg, df[(ntrain+1):nrow(df),])
 
 rmse_reg = sqrt(mean((df$sp500_ret[(ntrain+1):nrow(df)] - pred_reg)^2))
+
+#Alternate ARMAX
+indpro_ts = ts(diff(data$INDPRO), start = data_start, frequency = 12)
+
+indpro_train = window(indpro_ts, start = data_start, end = train_end)
+indpro_holdout = window(indpro_ts, start = holdout_start)
+
+ccf(indpro_train, train, main = "CCF of differenced INDPRO & SP500 returns")
+
+df2 = data.frame(indpro_l2 = c(indpro_ts)[1:(ntotal-3)],
+                 vix_fc = vix_fc[3:(ntotal-1)],
+                 sp500_ret = data$sp500_ret[3:(ntotal-1)],
+                 BAA_fc = BAA_fc[3:(ntotal-1)])
+
+reg_alt = lm(sp500_ret ~ vix_fc + BAA_fc + indpro_l2, data = df2[1:(ntrain-2),])
+print(summary(reg_alt))
+
+acf(reg_alt$residuals, main = "ACF of regression residuals")
+pacf(reg_alt$residuals, main = "PACF of regression residuals")
+
+pred_reg_alt = predict(reg_alt, df2[(ntrain-1):nrow(df2),])
+rmse_reg_alt = sqrt(mean((df2$sp500_ret[(ntrain-1):nrow(df2)] - pred_reg_alt)^2))
+
+#Alternate ARMAX 2
+copper_ts = ts(diff(log(data$Copper)), start = data_start, frequency = 12)
+
+copper_train = window(copper_ts, start = data_start, end = train_end)
+copper_holdout = window(copper_ts, start = holdout_start)
+
+ccf(copper_train, train, main = "CCF of log differenced Copper & SP500 returns")
+
+df3 = data.frame(copper_l2 = c(copper_ts)[1:(ntotal-3)],
+                 vix_fc = vix_fc[3:(ntotal-1)],
+                 sp500_ret = data$sp500_ret[3:(ntotal-1)],
+                 BAA_fc = BAA_fc[3:(ntotal-1)])
+
+reg_alt2 = lm(sp500_ret ~ vix_fc + BAA_fc + copper_l2, data = df3[1:(ntrain-2),])
+print(summary(reg_alt2))
+
+acf(reg_alt2$residuals, main = "ACF of regression residuals")
+pacf(reg_alt2$residuals, main = "PACF of regression residuals")
+
+pred_reg_alt2 = predict(reg_alt2, df3[(ntrain-1):nrow(df3),])
+rmse_reg_alt2 = sqrt(mean((df3$sp500_ret[(ntrain-1):nrow(df3)] - pred_reg_alt2)^2))
 
 #Initially, the focus was on finding leading predictors but most predictors had either a weak leading effect or no leading effect at all over the S&P 500, which led to a worser model. 
 #Hence, the focus shifted to finding variables that had a strong lag 0 correlation with the SP500 returns, and use the 1-step forecasts of these variables in the holdout set to build a good ARMAX model. 
