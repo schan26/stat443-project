@@ -66,7 +66,7 @@ plot(
   lwd = 1.5,
   xlab = "Date",
   ylab = "Monthly return (%)",
-  main = "Time Series — sp500_ret"
+  main = "Time Series — sp500 returns"
 )
 
 abline(h = mean(sp500_x), col = "red", lty = 2, lwd = 1.2)
