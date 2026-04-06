@@ -86,13 +86,30 @@ arima_fc = function(tsdata,ntrain,order,seasonal,method,traincoef,include.mean,
   return(list(rmse=rmse, fc=holdout_fc))
 }
 
+regression_fc = function(data,ntrain) {
+  
+  reg = lm(sp500_ret ~ ., data = data[1:ntrain,])
+  print(summary(reg))
+  
+  acf(reg$residuals, main = "ACF of regression residuals")
+  pacf(reg$residuals, main = "PACF of regression residuals")
+  
+  pred_reg = predict(reg, data[(ntrain+1):nrow(data),])
+  
+  rmse_reg = sqrt(mean((data$sp500_ret[(ntrain+1):nrow(data)] - pred_reg)^2))
+  
+  return(list(rmse = rmse_reg, fc = pred_reg, resid = reg$residuals))
+}
+
 data_start = c(1990,2)
 
 data <- read.csv("data/processed/cleanedData.csv")
 data_ts <- ts(data$sp500_ret, start = data_start, frequency = 12)
 
+ntotal = nrow(data) #This equals 432
 ntrain = ceiling(nrow(data)*0.7)
 nholdout = nrow(data) - ntrain
+
 train_end = c(2015,4)
 holdout_start = c(2015,5)
 
@@ -149,12 +166,10 @@ BAA_results = arima_fc(BAA_ts,length(BAA_train),c(2,0,1),c(0,0,0),"ML",BAA_model
 BAA_fc <- c(BAA_train,BAA_results$fc)
 
 #VIX forecasting - ARMA
-vix_ts = ts(data$VIXCLS, start = data_start, frequency = 12)
-vix_diff = as.numeric(diff(vix_ts))
-vix_diff_ts = ts(vix_diff, start = data_start, frequency = 12)
+vix_ts = ts(diff(data$VIXCLS), start = data_start, frequency = 12)
 
-vix_train = window(vix_diff_ts, start = data_start, end = train_end)
-vix_holdout = window(vix_diff_ts, start = holdout_start)
+vix_train = window(vix_ts, start = data_start, end = train_end)
+vix_holdout = window(vix_ts, start = holdout_start)
 
 acf(vix_train, main = "ACF of differenced VIX" )
 pacf(vix_train, main = "PACF of differenced VIX")
@@ -162,82 +177,53 @@ pacf(vix_train, main = "PACF of differenced VIX")
 ccf(vix_train,train, main = "CCF of differenced VIX & SP500 returns")
 
 vix_model = auto.arima(vix_train, stationary = T, seasonal = F)
-vix_results = arima_fc(vix_diff_ts,length(vix_train),c(0,0,3),c(0,0,0),"ML",vix_model$coef,include.mean = F)
+vix_results = arima_fc(vix_ts,length(vix_train),c(0,0,3),c(0,0,0),"ML",vix_model$coef,include.mean = F)
 
 vix_fc = c(vix_train,vix_results$fc)
 
 #ARMAX set up
-ntotal = nrow(data) #This equals 432
+indpro_diff = diff(data$INDPRO)
+copper_ldiff = diff(log(data$Copper))
+silver_ldiff = diff(log(data$Silver))
 
-df = data.frame(vix_fc = vix_fc[1:(ntotal-1)],
-                sp500_ret = data$sp500_ret[1:(ntotal-1)],
-                BAA_fc = BAA_fc[1:(ntotal-1)])
+ccf(indpro_diff[1:ntrain], c(train), main = "CCF of differenced INDPRO & SP500 returns")
+ccf(data$CPI[1:ntrain], c(train), main = "CCF of CPI % change & SP500 returns")
+ccf(copper_ldiff[1:ntrain], c(train), main = "CCF of log differenced Copper & SP500 returns")
+ccf(silver_ldiff[1:ntrain], c(train), main = "CCF of log differenced Silver & SP500 returns")
 
-reg = lm(sp500_ret ~ vix_fc + BAA_fc, data = df[1:ntrain,])
-print(summary(reg))
+df = data.frame(cpi_l4 = data$CPI[1:(ntotal-5)],
+                indpro_l2 = indpro_diff[3:(ntotal-3)],
+                copper_l2 = copper_ldiff[3:(ntotal-3)],
+                silver_l1 = silver_ldiff[4:(ntotal-2)],
+                vix_fc = vix_fc[5:(ntotal-1)],
+                sp500_ret = data$sp500_ret[5:(ntotal-1)],
+                BAA_fc = BAA_fc[5:(ntotal-1)])
 
-acf(reg$residuals, main = "ACF of regression residuals")
-pacf(reg$residuals, main = "PACF of regression residuals")
+#ntrain has to change so that data after 2015-04 cannot be used for training
+
+#Forward selection of variables
+
+#Base variables - VIX and BAA_fc
+reg_results = regression_fc(subset(df, select = c(sp500_ret, vix_fc, BAA_fc)), ntrain = ntrain - 4) 
+
+#3 variables
+reg_alt_results = regression_fc(subset(df, select = c(sp500_ret, vix_fc, BAA_fc, copper_l2)), ntrain = ntrain - 4)
+reg_alt2_results = regression_fc(subset(df, select = c(sp500_ret, vix_fc, BAA_fc, indpro_l2)), ntrain = ntrain - 4)
+reg_alt3_results = regression_fc(subset(df, select = c(sp500_ret, vix_fc, BAA_fc, silver_l1)), ntrain = ntrain - 4)
+reg_alt4_results = regression_fc(subset(df, select = c(sp500_ret, vix_fc, BAA_fc, cpi_l4)), ntrain = ntrain - 4)
 
 #Residuals look like white noise so no further model needs to be fitted for the residuals.
 
-pred_reg = predict(reg, df[(ntrain+1):nrow(df),])
-
-rmse_reg = sqrt(mean((df$sp500_ret[(ntrain+1):nrow(df)] - pred_reg)^2))
-
-#Alternate ARMAX
-indpro_ts = ts(diff(data$INDPRO), start = data_start, frequency = 12)
-
-indpro_train = window(indpro_ts, start = data_start, end = train_end)
-indpro_holdout = window(indpro_ts, start = holdout_start)
-
-ccf(indpro_train, train, main = "CCF of differenced INDPRO & SP500 returns")
-
-df2 = data.frame(indpro_l2 = c(indpro_ts)[1:(ntotal-3)],
-                 vix_fc = vix_fc[3:(ntotal-1)],
-                 sp500_ret = data$sp500_ret[3:(ntotal-1)],
-                 BAA_fc = BAA_fc[3:(ntotal-1)])
-
-reg_alt = lm(sp500_ret ~ vix_fc + BAA_fc + indpro_l2, data = df2[1:(ntrain-2),])
-print(summary(reg_alt))
-
-acf(reg_alt$residuals, main = "ACF of regression residuals")
-pacf(reg_alt$residuals, main = "PACF of regression residuals")
-
-pred_reg_alt = predict(reg_alt, df2[(ntrain-1):nrow(df2),])
-rmse_reg_alt = sqrt(mean((df2$sp500_ret[(ntrain-1):nrow(df2)] - pred_reg_alt)^2))
-
-#Alternate ARMAX 2
-copper_ts = ts(diff(log(data$Copper)), start = data_start, frequency = 12)
-
-copper_train = window(copper_ts, start = data_start, end = train_end)
-copper_holdout = window(copper_ts, start = holdout_start)
-
-ccf(copper_train, train, main = "CCF of log differenced Copper & SP500 returns")
-
-df3 = data.frame(copper_l2 = c(copper_ts)[1:(ntotal-3)],
-                 vix_fc = vix_fc[3:(ntotal-1)],
-                 sp500_ret = data$sp500_ret[3:(ntotal-1)],
-                 BAA_fc = BAA_fc[3:(ntotal-1)])
-
-reg_alt2 = lm(sp500_ret ~ vix_fc + BAA_fc + copper_l2, data = df3[1:(ntrain-2),])
-print(summary(reg_alt2))
-
-acf(reg_alt2$residuals, main = "ACF of regression residuals")
-pacf(reg_alt2$residuals, main = "PACF of regression residuals")
-
-pred_reg_alt2 = predict(reg_alt2, df3[(ntrain-1):nrow(df3),])
-rmse_reg_alt2 = sqrt(mean((df3$sp500_ret[(ntrain-1):nrow(df3)] - pred_reg_alt2)^2))
 
 #Initially, the focus was on finding leading predictors but most predictors had either a weak leading effect or no leading effect at all over the S&P 500, which led to a worser model. 
 #Hence, the focus shifted to finding variables that had a strong lag 0 correlation with the SP500 returns, and use the 1-step forecasts of these variables in the holdout set to build a good ARMAX model. 
 #Two such variables were VIX and Baa Corporate bond yield relative to yield on 10-Year Treasury Constant Maturity, which had moderate lag 0 correlations with the SP500 returns over the training set.
 
-rmse_table = cbind(iid_results$rmse, persist_results$rmse, esm_results$rmse, lholt_results$rmse, arma_results$rmse, rmse_reg)
+rmse_table = cbind(iid_results$rmse, persist_results$rmse, esm_results$rmse, lholt_results$rmse, arma_results$rmse, reg_results$rmse)
 colnames(rmse_table) = c("iid_rmse","persist_rmse","esm_rmse","lholt_rmse","arma_rmse","armax_rmse")
 rownames(rmse_table) = NA
 
-fc_table = cbind(data$sp500_ret[(ntrain+1):(ntotal-1)],iid_results$fc[1:(nholdout-1)],persist_results$fc[1:(nholdout-1)],esm_results$fc[1:(nholdout-1)],lholt_results$fc[1:(nholdout-1)],arma_results$fc[1:(nholdout-1)],c(pred_reg))
+fc_table = cbind(data$sp500_ret[(ntrain+1):(ntotal-1)],iid_results$fc[1:(nholdout-1)],persist_results$fc[1:(nholdout-1)],esm_results$fc[1:(nholdout-1)],lholt_results$fc[1:(nholdout-1)],arma_results$fc[1:(nholdout-1)],reg_results$fc)
 colnames(fc_table) = c("holdout","iid_fc","persist_fc","esm_fc","lholt_fc","arma_fc","armax_fc")
 rownames(fc_table) = data$observation_date[(ntrain+1):(ntotal-1)]
 
