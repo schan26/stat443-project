@@ -185,45 +185,55 @@ vix_fc = c(vix_train,vix_results$fc)
 indpro_diff = diff(data$INDPRO)
 copper_ldiff = diff(log(data$Copper))
 silver_ldiff = diff(log(data$Silver))
+gold_ldiff = diff(log(data$Gold))
 
 ccf(indpro_diff[1:ntrain], c(train), main = "CCF of differenced INDPRO & SP500 returns")
 ccf(data$CPI[1:ntrain], c(train), main = "CCF of CPI % change & SP500 returns")
 ccf(copper_ldiff[1:ntrain], c(train), main = "CCF of log differenced Copper & SP500 returns")
 ccf(silver_ldiff[1:ntrain], c(train), main = "CCF of log differenced Silver & SP500 returns")
+ccf(gold_ldiff[1:ntrain], c(train), main = "CCF of log differenced Gold & SP500 returns")
 
-df = data.frame(cpi_l4 = data$CPI[1:(ntotal-5)],
-                indpro_l2 = indpro_diff[3:(ntotal-3)],
-                copper_l2 = copper_ldiff[3:(ntotal-3)],
-                silver_l1 = silver_ldiff[4:(ntotal-2)],
-                vix_fc = vix_fc[5:(ntotal-1)],
-                sp500_ret = data$sp500_ret[5:(ntotal-1)],
-                BAA_fc = BAA_fc[5:(ntotal-1)])
+df = data.frame(gold_l10 = gold_ldiff[1:(ntotal-11)],
+                cpi_l4 = data$CPI[7:(ntotal-5)],
+                indpro_l2 = indpro_diff[9:(ntotal-3)],
+                copper_l2 = copper_ldiff[9:(ntotal-3)],
+                silver_l1 = silver_ldiff[10:(ntotal-2)],
+                vix_fc = vix_fc[11:(ntotal-1)],
+                sp500_ret = data$sp500_ret[11:(ntotal-1)],
+                BAA_fc = BAA_fc[11:(ntotal-1)])
+
+#Variables ordered in descending order according to absolute correlation are vix_fc, BAA_fc, indpro_l2, CPI_l4, copper_l2, silver_l1 and gold_l10
 
 #ntrain has to change so that data after 2015-04 cannot be used for training
 
-#Forward selection of variables
+#Forward selection of variables with holdout RMSE threshold of 0.01 - variables have to improve holdout RMSE by 1% to be added to the model
 
-#Base variables - VIX and BAA_fc
-reg_results = regression_fc(subset(df, select = c(sp500_ret, vix_fc, BAA_fc)), ntrain = ntrain - 4) 
+#1 variable
+reg_results = regression_fc(subset(df, select = c(sp500_ret, vix_fc)), ntrain = ntrain - 10)
+
+#2 variables
+reg_2_results = regression_fc(subset(df, select = c(sp500_ret, vix_fc, BAA_fc)), ntrain = ntrain - 10) 
 
 #3 variables
-reg_alt_results = regression_fc(subset(df, select = c(sp500_ret, vix_fc, BAA_fc, copper_l2)), ntrain = ntrain - 4)
-reg_alt2_results = regression_fc(subset(df, select = c(sp500_ret, vix_fc, BAA_fc, indpro_l2)), ntrain = ntrain - 4)
-reg_alt3_results = regression_fc(subset(df, select = c(sp500_ret, vix_fc, BAA_fc, silver_l1)), ntrain = ntrain - 4)
-reg_alt4_results = regression_fc(subset(df, select = c(sp500_ret, vix_fc, BAA_fc, cpi_l4)), ntrain = ntrain - 4)
+reg_3_results = regression_fc(subset(df, select = c(sp500_ret, vix_fc, BAA_fc, indpro_l2)), ntrain = ntrain - 10)
+reg_4_results = regression_fc(subset(df, select = c(sp500_ret, vix_fc, BAA_fc, cpi_l4)), ntrain = ntrain - 10)
+reg_5_results = regression_fc(subset(df, select = c(sp500_ret, vix_fc, BAA_fc, copper_l2)), ntrain = ntrain - 10)
+reg_6_results = regression_fc(subset(df, select = c(sp500_ret, vix_fc, BAA_fc, silver_l1)), ntrain = ntrain - 10)
+
+#4 variables
+reg_7_results = regression_fc(subset(df, select = c(sp500_ret, vix_fc, BAA_fc, silver_l1, gold_l10)), ntrain = ntrain - 10)
 
 #Residuals look like white noise so no further model needs to be fitted for the residuals.
-
 
 #Initially, the focus was on finding leading predictors but most predictors had either a weak leading effect or no leading effect at all over the S&P 500, which led to a worser model. 
 #Hence, the focus shifted to finding variables that had a strong lag 0 correlation with the SP500 returns, and use the 1-step forecasts of these variables in the holdout set to build a good ARMAX model. 
 #Two such variables were VIX and Baa Corporate bond yield relative to yield on 10-Year Treasury Constant Maturity, which had moderate lag 0 correlations with the SP500 returns over the training set.
 
-rmse_table = cbind(iid_results$rmse, persist_results$rmse, esm_results$rmse, lholt_results$rmse, arma_results$rmse, reg_results$rmse)
+rmse_table = cbind(iid_results$rmse, persist_results$rmse, esm_results$rmse, lholt_results$rmse, arma_results$rmse, reg_6_results$rmse)
 colnames(rmse_table) = c("iid_rmse","persist_rmse","esm_rmse","lholt_rmse","arma_rmse","armax_rmse")
 rownames(rmse_table) = NA
 
-fc_table = cbind(data$sp500_ret[(ntrain+1):(ntotal-1)],iid_results$fc[1:(nholdout-1)],persist_results$fc[1:(nholdout-1)],esm_results$fc[1:(nholdout-1)],lholt_results$fc[1:(nholdout-1)],arma_results$fc[1:(nholdout-1)],reg_results$fc)
+fc_table = cbind(data$sp500_ret[(ntrain+1):(ntotal-1)],iid_results$fc[1:(nholdout-1)],persist_results$fc[1:(nholdout-1)],esm_results$fc[1:(nholdout-1)],lholt_results$fc[1:(nholdout-1)],arma_results$fc[1:(nholdout-1)],reg_6_results$fc)
 colnames(fc_table) = c("holdout","iid_fc","persist_fc","esm_fc","lholt_fc","arma_fc","armax_fc")
 rownames(fc_table) = data$observation_date[(ntrain+1):(ntotal-1)]
 
