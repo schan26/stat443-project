@@ -155,7 +155,7 @@ BAA_ts = ts(diff(data$BAA10YM), start = data_start, frequency = 12)
 BAA_train = window(BAA_ts, start = data_start, end = train_end)
 BAA_holdout = window(BAA_ts, start = holdout_start)
 
-ccf(BAA_train,train, main = "CCF of differenced BAA spread & SP500 returns", ylab = "CCF")
+ccf(BAA_train,train, main = "CCF of differenced BAA spread & SP500 returns", ylab = "CCF", lag.max = 10)
 
 acf(BAA_train, main = "ACF of differenced BAA spread")
 pacf(BAA_train, main = "PACF of differenced BAA spread")
@@ -174,7 +174,7 @@ vix_holdout = window(vix_ts, start = holdout_start)
 acf(vix_train, main = "ACF of differenced VIX" )
 pacf(vix_train, main = "PACF of differenced VIX")
 
-ccf(vix_train,train, main = "CCF of differenced VIX & SP500 returns")
+ccf(vix_train,train, main = "CCF of differenced VIX & SP500 returns", ylab = "CCF", lag.max = 10) 
 
 vix_model = auto.arima(vix_train, stationary = T, seasonal = F)
 vix_results = arima_fc(vix_ts,length(vix_train),c(0,0,3),c(0,0,0),"ML",vix_model$coef,include.mean = F)
@@ -187,11 +187,11 @@ copper_ldiff = diff(log(data$Copper))
 silver_ldiff = diff(log(data$Silver))
 gold_ldiff = diff(log(data$Gold))
 
-ccf(indpro_diff[1:ntrain], c(train), main = "CCF of differenced INDPRO & SP500 returns")
-ccf(data$CPI[1:ntrain], c(train), main = "CCF of CPI % change & SP500 returns")
-ccf(copper_ldiff[1:ntrain], c(train), main = "CCF of log differenced Copper & SP500 returns")
-ccf(silver_ldiff[1:ntrain], c(train), main = "CCF of log differenced Silver & SP500 returns")
-ccf(gold_ldiff[1:ntrain], c(train), main = "CCF of log differenced Gold & SP500 returns")
+ccf(indpro_diff[1:ntrain], c(train), main = "CCF of differenced INDPRO & SP500 returns",  ylab = "CCF", lag.max = 10)
+ccf(data$CPI[1:ntrain], c(train), main = "CCF of CPI % change & SP500 returns",  ylab = "CCF", lag.max = 10)
+ccf(copper_ldiff[1:ntrain], c(train), main = "CCF of log differenced Copper & SP500 returns",  ylab = "CCF", lag.max = 10)
+ccf(silver_ldiff[1:ntrain], c(train), main = "CCF of log differenced Silver & SP500 returns",  ylab = "CCF", lag.max = 10)
+ccf(gold_ldiff[1:ntrain], c(train), main = "CCF of log differenced Gold & SP500 returns",  ylab = "CCF", lag.max = 10)
 
 df = data.frame(gold_l10 = gold_ldiff[1:(ntotal-11)],
                 cpi_l4 = data$CPI[7:(ntotal-5)],
