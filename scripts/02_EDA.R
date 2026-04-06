@@ -14,7 +14,7 @@ holdout <- window(data_ts, start = holdout_start)
 # Subset data to training period only
 train_data <- data[1:length(train),]
 
-vars <- c("CPI", "VIXCLS", "T10Y2Y", "INDPRO", "Gold", "Silver")
+vars <- c("CPI", "VIXCLS", "INDPRO", "Gold", "Silver")
 
 # ── Time series plots ──────────────────────────────────────────────────────────
 if (!dir.exists("figs/ts")) {

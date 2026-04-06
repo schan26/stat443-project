@@ -17,7 +17,6 @@ fill_missing_values <- function(df, date_col = "observation_date") {
 
 # load raw data
 indpro <- read.csv("data/raw/INDPRO.csv")
-yield_curve <- read.csv("data/raw/T10Y2Y.csv")
 cpi <- read.csv("data/raw/CPI.csv", skip = 11)
 vix <- read.csv("data/raw/VIXCLS.csv")
 sp500 <- rename(read.csv("data/raw/S&P 500.csv"), observation_date = Date, sp500_ret = Change..)[,c("observation_date","sp500_ret")]
@@ -28,7 +27,6 @@ BAA10Y <- read.csv("data/raw/BAA10YM.csv")
 
 # change data type of observation_date 
 indpro$observation_date <- as.Date(indpro$observation_date)
-yield_curve$observation_date <- as.Date(yield_curve$observation_date)
 vix$observation_date <- as.Date(vix$observation_date)
 sp500$observation_date <- as.Date(sp500$observation_date)
 gold$observation_date <- as.Date(gold$observation_date, format = "%m/%d/%Y")
@@ -39,7 +37,6 @@ BAA10Y$observation_date <- as.Date(BAA10Y$observation_date)
 
 #Apply fill_missing_values function to daily data-sets only
 vix <- fill_missing_values(vix)
-yield_curve <- fill_missing_values(yield_curve)
 copper <- fill_missing_values(copper)
 
 #Transform CPI data-set (format needs to be changed to match other data-sets)
@@ -54,7 +51,6 @@ sp500$sp500_ret = as.numeric(sub("%","",sp500$sp500_ret))
 #Join multiple data-frames
 merged_data <- cpi %>%
   inner_join(vix, by = "observation_date") %>%
-  inner_join(yield_curve, by = "observation_date") %>%
   inner_join(indpro, by = "observation_date") %>%
   inner_join(sp500, by = "observation_date") %>%
   inner_join(gold, by = "observation_date") %>%
