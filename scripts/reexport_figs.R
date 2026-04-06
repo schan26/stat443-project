@@ -92,7 +92,7 @@ acf(
   lwd = 2,
   xlab = "Lag",
   ylab = "ACF",
-  main = "ACF — sp500_ret"
+  main = "ACF — sp500 returns"
 )
 
 pacf(
@@ -101,7 +101,7 @@ pacf(
   lwd = 2,
   xlab = "Lag",
   ylab = "Partial ACF",
-  main = "PACF — sp500_ret"
+  main = "PACF — sp500 returns"
 )
 
 dev.off()
@@ -129,7 +129,7 @@ matplot(
   lwd = 2.5,
   xlab = "Lag (months)",
   ylab = "Variogram",
-  main = "Variogram — sp500_ret"
+  main = "Variogram — sp500 returns"
 )
 
 abline(h = 1, col = "black", lty = 2, lwd = 1.2)
