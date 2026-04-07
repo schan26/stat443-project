@@ -187,11 +187,12 @@ copper_ldiff = diff(log(data$Copper))
 silver_ldiff = diff(log(data$Silver))
 gold_ldiff = diff(log(data$Gold))
 
-ccf(indpro_diff[1:ntrain], c(train), main = "CCF of differenced INDPRO & SP500 returns",  ylab = "CCF", xlab = "Lags (months)", cex.main = 1.2, lag.max = 10)
-ccf(data$CPI[1:ntrain], c(train), main = "CCF of CPI % change & SP500 returns",  ylab = "CCF", xlab = "Lags (months)", cex.main = 1.2, lag.max = 10)
-ccf(copper_ldiff[1:ntrain], c(train), main = "CCF of log differenced Copper & SP500 returns",  ylab = "CCF", xlab = "Lags (months)", cex.main = 1.2, lag.max = 10)
-ccf(silver_ldiff[1:ntrain], c(train), main = "CCF of log differenced Silver & SP500 returns",  ylab = "CCF", xlab = "Lags (months)", cex.main = 1.2, lag.max = 10)
-ccf(gold_ldiff[1:ntrain], c(train), main = "CCF of log differenced Gold & SP500 returns",  ylab = "CCF", xlab = "Lags (months)", cex.main = 1.2, lag.max = 10)
+ccf(indpro_diff[1:ntrain], c(train), main = "CCF of diff(INDPRO) & SP500 returns",  ylab = "CCF", lag.max = 10)
+ccf(data$CPI[1:ntrain], c(train), main = "CCF of CPI % change & SP500 returns",  ylab = "CCF", lag.max = 10)
+ccf(copper_ldiff[1:ntrain], c(train), main = "CCF of log.diff(Copper) & SP500 returns",  ylab = "CCF", lag.max = 10)
+ccf(silver_ldiff[1:ntrain], c(train), main = "CCF of log.diff(Silver) & SP500 returns",  ylab = "CCF", lag.max = 10)
+ccf(gold_ldiff[1:ntrain], c(train), main = "CCF of log.diff(Gold) & SP500 returns",  ylab = "CCF", lag.max = 10)
+
 
 df = data.frame(gold_l10 = gold_ldiff[1:(ntotal-11)],
                 cpi_l4 = data$CPI[7:(ntotal-5)],
