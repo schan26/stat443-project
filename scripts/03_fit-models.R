@@ -98,7 +98,7 @@ regression_fc = function(data,ntrain) {
   
   rmse_reg = sqrt(mean((data$sp500_ret[(ntrain+1):nrow(data)] - pred_reg)^2))
   
-  return(list(rmse = rmse_reg, fc = pred_reg, resid = reg$residuals))
+  return(list(rmse = rmse_reg, fc = pred_reg, resid = reg$residuals, model = reg))
 }
 
 data_start = c(1990,2)
