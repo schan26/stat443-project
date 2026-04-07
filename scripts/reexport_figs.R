@@ -97,7 +97,7 @@ acf(
   sp500_x,
   lag.max = 20,
   lwd = 2,
-  xlab = "Lag",
+  xlab = "Lag (Months)",
   ylab = "ACF",
   main = "ACF — sp500 returns"
 )
@@ -106,7 +106,7 @@ pacf(
   sp500_x,
   lag.max = 20,
   lwd = 2,
-  xlab = "Lag",
+  xlab = "Lag (Months)",
   ylab = "Partial ACF",
   main = "PACF — sp500 returns"
 )
@@ -125,13 +125,13 @@ par(
 acf(BAA_train, 
     lag.max = 20,
     lwd = 2,
-    xlab = "Lag",
+    xlab = "Lag (Months)",
     ylab = "ACF",
     main = "ACF of differenced Baa spread")
 pacf(BAA_train, 
      lag.max = 20,
      lwd = 2,
-     xlab = "Lag",
+     xlab = "Lag (Months)",
      ylab = " Partial ACF",
      main = "PACF of differenced Baa spread")
 dev.off()
@@ -149,13 +149,13 @@ acf(vix_train,
     main = "ACF of differenced VIX",
     lag.max = 20,
     lwd = 2,
-    xlab = "Lag",
+    xlab = "Lag (Months)",
     ylab = "ACF")
 pacf(vix_train, 
      main = "PACF of differenced VIX",
      lag.max = 20,
      lwd = 2,
-     xlab = "Lag",
+     xlab = "Lag (Months)",
      ylab = "Partial ACF")
 dev.off()
 
