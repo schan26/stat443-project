@@ -1,6 +1,4 @@
-# Re-export cleaner S&P 500 report figures
-# Save this as: scripts/reexport_figs.R
-
+# ── Load and prepare data ──────────────────────────────────────────────────────
 data <- read.csv("data/processed/cleanedData.csv")
 data$observation_date <- as.Date(paste0(data$observation_date, "-01"))
 
@@ -10,10 +8,12 @@ data_ts <- ts(data$sp500_ret, start = c(1990, 2), frequency = 12)
 train <- window(data_ts, start = c(1990, 2), end = train_end)
 train_data <- data[1:length(train), ]
 
+# ── Create report output directory ─────────────────────────────────────────────
 if (!dir.exists("figs/report")) {
   dir.create("figs/report", recursive = TRUE)
 }
 
+# ── Variogram function ─────────────────────────────────────────────────────────
 variogram <- function(y, lagmax = 12, iprint = FALSE) {
   G <- rep(1, lagmax)
   n <- length(y)
@@ -38,9 +38,7 @@ variogram <- function(y, lagmax = 12, iprint = FALSE) {
   list(G = G, H = H)
 }
 
-# -----------------------------
-# Common style settings
-# -----------------------------
+# ── Common style settings ──────────────────────────────────────────────────────
 main_cex <- 2.0
 lab_cex  <- 1.5
 axis_cex <- 1.2
@@ -48,9 +46,7 @@ axis_cex <- 1.2
 sp500_x <- na.omit(train_data$sp500_ret)
 sp500_dates <- train_data$observation_date[!is.na(train_data$sp500_ret)]
 
-# -----------------------------
-# 1) Time series plot
-# -----------------------------
+# ── Time series plot ───────────────────────────────────────────────────────────
 png("figs/report/sp500_tsplot.png", width = 2000, height = 1300, res = 220)
 
 par(
@@ -73,9 +69,7 @@ abline(h = mean(sp500_x), col = "red", lty = 2, lwd = 1.2)
 
 dev.off()
 
-# -----------------------------
-# 2) ACF / PACF plot
-# -----------------------------
+# ── ACF / PACF plot ────────────────────────────────────────────────────────────
 png("figs/report/sp500_ret_acfpacf.png", width = 2400, height = 1200, res = 220)
 
 par(
@@ -106,9 +100,7 @@ pacf(
 
 dev.off()
 
-# -----------------------------
-# 3) Variogram plot
-# -----------------------------
+# ── Variogram plot ─────────────────────────────────────────────────────────────
 vg <- variogram(sp500_x, lagmax = 12)
 lags <- 1:12
 

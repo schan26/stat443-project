@@ -1,7 +1,7 @@
 library(tidyr)
 library(dplyr)
 
-#Adds missing dates in sequence and then applies a forward fill to add data for holidays/weekends
+# ── Helper function ────────────────────────────────────────────────────────────
 fill_missing_values <- function(df, date_col = "observation_date") {
   
   all_dates <- data.frame(observation_date = seq(min(df[[date_col]]), max(df[[date_col]]), by = "day"))
@@ -15,7 +15,7 @@ fill_missing_values <- function(df, date_col = "observation_date") {
   return(df)
 }
 
-# load raw data
+# ── Load raw data ──────────────────────────────────────────────────────────────
 indpro <- read.csv("data/raw/INDPRO.csv")
 cpi <- read.csv("data/raw/CPI.csv", skip = 11)
 vix <- read.csv("data/raw/VIXCLS.csv")
@@ -25,7 +25,7 @@ silver <- rename(read.csv("data/raw/Silver.csv"), observation_date = Date, Silve
 copper <- rename(read.csv("data/raw/Copper.csv"), observation_date = Date, Copper = Value)
 BAA10Y <- read.csv("data/raw/BAA10YM.csv")
 
-# change data type of observation_date 
+# ── Parse dates ────────────────────────────────────────────────────────────────
 indpro$observation_date <- as.Date(indpro$observation_date)
 vix$observation_date <- as.Date(vix$observation_date)
 sp500$observation_date <- as.Date(sp500$observation_date)
@@ -35,20 +35,20 @@ copper$observation_date <- as.Date(copper$observation_date, format = "%m/%d/%Y")
 BAA10Y$observation_date <- as.Date(BAA10Y$observation_date)
 
 
-#Apply fill_missing_values function to daily data-sets only
+# ── Forward-fill daily series ──────────────────────────────────────────────────
 vix <- fill_missing_values(vix)
 copper <- fill_missing_values(copper)
 
-#Transform CPI data-set (format needs to be changed to match other data-sets)
+# ── Reshape CPI data ───────────────────────────────────────────────────────────
 cpi <- pivot_longer(cpi, cols = Jan:Dec, names_to = "month", values_to = "CPI") #change from wide to long format
 cpi$observation_date <- paste0(cpi$Year,"-",cpi$month, "-01") #assign default date to be the first of every month
 cpi <- cpi[,c("observation_date","CPI")]
 cpi$observation_date = as.Date(cpi$observation_date, format = "%Y-%b-%d")
 
-#Format return column in SP500 data
+# ── Clean S&P 500 returns ──────────────────────────────────────────────────────
 sp500$sp500_ret = as.numeric(sub("%","",sp500$sp500_ret))
 
-#Join multiple data-frames
+# ── Merge data sources ─────────────────────────────────────────────────────────
 merged_data <- cpi %>%
   inner_join(vix, by = "observation_date") %>%
   inner_join(indpro, by = "observation_date") %>%
@@ -58,9 +58,10 @@ merged_data <- cpi %>%
   inner_join(copper, by = "observation_date") %>%
   inner_join(BAA10Y, by = "observation_date")
 
-
+# ── Format output ──────────────────────────────────────────────────────────────
 merged_data$observation_date = format(merged_data$observation_date, "%Y-%m")
 
-#2 CPI values in 2025 are missing due to the 2025 lapse in appropriations, no other issues found
+# ── Save processed data ────────────────────────────────────────────────────────
+# Two CPI values in 2025 are missing due to the 2025 lapse in appropriations.
 write.csv(merged_data, file = "data/processed/cleanedData.csv")
 
