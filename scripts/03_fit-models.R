@@ -155,10 +155,10 @@ BAA_ts = ts(diff(data$BAA10YM), start = data_start, frequency = 12)
 BAA_train = window(BAA_ts, start = data_start, end = train_end)
 BAA_holdout = window(BAA_ts, start = holdout_start)
 
-BAA_ccf <- ccf(BAA_train,train, main = "CCF of differenced Baa spread & SP500 returns", ylab = "CCF", xlab = "Lags (months)", cex.main = 1.2, lag.max = 10)
+BAA_ccf <- ccf(as.numeric(BAA_train),as.numeric(train), main = "CCF of differenced Baa spread & SP500 returns", ylab = "CCF", xlab = "Lags (months)", cex.main = 1.2, lag.max = 10)
 
-acf(BAA_train, main = "ACF of differenced Baa spread", xlab = "Lags (months)")
-pacf(BAA_train, main = "PACF of differenced Baa spread", xlab = "Lags (months)")
+acf(as.numeric(BAA_train), main = "ACF of differenced Baa spread", xlab = "Lags (months)")
+pacf(as.numeric(BAA_train), main = "PACF of differenced Baa spread", xlab = "Lags (months)")
 
 BAA_model = auto.arima(BAA_train, stationary = T, seasonal = F)
 BAA_results = arima_fc(BAA_ts,length(BAA_train),c(2,0,1),c(0,0,0),"ML",BAA_model$coef,include.mean = F)
@@ -171,10 +171,10 @@ vix_ts = ts(diff(data$VIXCLS), start = data_start, frequency = 12)
 vix_train = window(vix_ts, start = data_start, end = train_end)
 vix_holdout = window(vix_ts, start = holdout_start)
 
-acf(vix_train, main = "ACF of differenced VIX", xlab = "lags (months)")
-pacf(vix_train, main = "PACF of differenced VIX", xlab = "lags (months)")
+acf(as.numeric(vix_train), main = "ACF of differenced VIX", xlab = "lags (months)")
+pacf(as.numeric(vix_train), main = "PACF of differenced VIX", xlab = "lags (months)")
 
-VIX_ccf <- ccf(vix_train,train, main = "CCF of differenced VIX & SP500 returns", ylab = "CCF", xlab = "Lags (months)", cex.main = 1.2, lag.max = 10)
+VIX_ccf <- ccf(as.numeric(vix_train),as.numeric(train), main = "CCF of differenced VIX & SP500 returns", ylab = "CCF", xlab = "Lags (months)", cex.main = 1.2, lag.max = 10)
 
 vix_model = auto.arima(vix_train, stationary = T, seasonal = F)
 vix_results = arima_fc(vix_ts,length(vix_train),c(0,0,3),c(0,0,0),"ML",vix_model$coef,include.mean = F)
