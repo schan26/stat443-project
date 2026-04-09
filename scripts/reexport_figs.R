@@ -94,7 +94,7 @@ par(
 )
 
 acf(
-  sp500_x,
+  as.numeric(sp500_x),
   lag.max = 20,
   lwd = 2,
   xlab = "Lag (Months)",
@@ -103,7 +103,7 @@ acf(
 )
 
 pacf(
-  sp500_x,
+  as.numeric(sp500_x),
   lag.max = 20,
   lwd = 2,
   xlab = "Lag (Months)",
@@ -122,13 +122,13 @@ par(
   cex.axis = axis_cex
 )
 
-acf(BAA_train, 
+acf(as.numeric(BAA_train), 
     lag.max = 20,
     lwd = 2,
     xlab = "Lag (Months)",
     ylab = "ACF",
     main = "ACF of differenced Baa spread")
-pacf(BAA_train, 
+pacf(as.numeric(BAA_train), 
      lag.max = 20,
      lwd = 2,
      xlab = "Lag (Months)",
@@ -145,13 +145,13 @@ par(
   cex.axis = axis_cex
 )
 
-acf(vix_train, 
+acf(as.numeric(vix_train), 
     main = "ACF of differenced VIX",
     lag.max = 20,
     lwd = 2,
     xlab = "Lag (Months)",
     ylab = "ACF")
-pacf(vix_train, 
+pacf(as.numeric(vix_train), 
      main = "PACF of differenced VIX",
      lag.max = 20,
      lwd = 2,
@@ -210,31 +210,31 @@ if (!dir.exists("figs/ccf")) {
 }
 
 png("figs/ccf/Copper_ccf.png", width = 1497, height = 1044, res = 220)
-ccf(copper_ldiff[1:ntrain], c(train), main = "CCF of log differenced Copper & SP500 returns",  ylab = "CCF", xlab="Lag (Months)", lag.max = 10)
+ccf(copper_ldiff[1:ntrain], as.numeric(train), main = "CCF of log differenced Copper & SP500 returns",  ylab = "CCF", xlab="Lag (Months)", lag.max = 10)
 dev.off()
 
 png("figs/ccf/INDPRO_ccf.png", width = 1497, height = 1044, res = 220)
-ccf(indpro_diff[1:ntrain], c(train), main = "CCF of differenced INDPRO & SP500 returns",  ylab = "CCF", xlab="Lag (Months)", lag.max = 10)
+ccf(indpro_diff[1:ntrain], as.numeric(train), main = "CCF of differenced INDPRO & SP500 returns",  ylab = "CCF", xlab="Lag (Months)", lag.max = 10)
 dev.off()
 
 png("figs/ccf/CPI_ccf.png", width = 1497, height = 1044, res = 220)
-ccf(data$CPI[1:ntrain], c(train), main = "CCF of CPI % change & SP500 returns",  ylab = "CCF", xlab="Lag (Months)", lag.max = 10)
+ccf(data$CPI[1:ntrain], as.numeric(train), main = "CCF of CPI % change & SP500 returns",  ylab = "CCF", xlab="Lag (Months)", lag.max = 10)
 dev.off()
 
 png("figs/ccf/Silver_ccf.png", width = 1497, height = 1044, res = 220)
-ccf(silver_ldiff[1:ntrain], c(train), main = "CCF of log differenced Silver & SP500 returns",  ylab = "CCF", xlab="Lag (Months)", lag.max = 10)
+ccf(silver_ldiff[1:ntrain], as.numeric(train), main = "CCF of log differenced Silver & SP500 returns",  ylab = "CCF", xlab="Lag (Months)", lag.max = 10)
 dev.off()
 
 png("figs/ccf/Gold_ccf.png", width = 1497, height = 1044, res = 220)
-ccf(gold_ldiff[1:ntrain], c(train), main = "CCF of log differenced Gold & SP500 returns",  ylab = "CCF", xlab="Lag (Months)", lag.max = 10)
+ccf(as.numeric(gold_ldiff[1:ntrain]), as.numeric(train), main = "CCF of log differenced Gold & SP500 returns",  ylab = "CCF", xlab="Lag (Months)", lag.max = 10)
 dev.off()
 
 png("figs/ccf/BAA_ccf.png", width = 1497, height = 1044, res = 220)
-ccf(BAA_train,train, main = "CCF of differenced Baa spread & SP500 returns", ylab = "CCF", xlab="Lag (Months)", lag.max = 10)
+ccf(as.numeric(BAA_train),as.numeric(train), main = "CCF of differenced Baa spread & SP500 returns", ylab = "CCF", xlab="Lag (Months)", lag.max = 10)
 dev.off()
 
 png("figs/ccf/VIX_ccf.png", width = 1497, height = 1044, res = 220)
-ccf(vix_train,train, main = "CCF of differenced VIX & SP500 returns", ylab = "CCF", xlab="Lag (Months)", lag.max = 10) 
+ccf(as.numeric(vix_train),as.numeric(train), main = "CCF of differenced VIX & SP500 returns", ylab = "CCF", xlab="Lag (Months)", lag.max = 10) 
 dev.off()
 
 
