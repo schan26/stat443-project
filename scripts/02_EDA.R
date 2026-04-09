@@ -17,12 +17,15 @@ train_data <- data[1:length(train),]
 vars <- c("CPI", "VIXCLS", "INDPRO", "Gold", "Silver")
 
 # ── times series plot analysis ────────────────────────────────────────────────
-plot(dates, na.omit(train_data[["sp500_ret"]]) ,
+par(mfrow = c(1, 1))
+dates <- train_data$observation_date[!is.na(train_data[["sp500_ret"]])]
+plot(dates, na.omit(train_data[["sp500_ret"]]),
      type = "l", lwd = 1.5,
      xlab = "Date", ylab = "sp500_ret",
-     main = "Time Series — sp500_ret", cex.main = 2.5)
+     main = "Time Series — sp500_ret", cex.main = 1)
 
 abline(h = mean(na.omit(train_data[["sp500_ret"]])), col = "red", lty = 2, lwd = 1)
+
 
 
 par(mfrow = c(2, 2))
