@@ -40,8 +40,8 @@ vix <- fill_missing_values(vix)
 copper <- fill_missing_values(copper)
 
 # ── Reshape CPI data ───────────────────────────────────────────────────────────
-cpi <- pivot_longer(cpi, cols = Jan:Dec, names_to = "month", values_to = "CPI") #change from wide to long format
-cpi$observation_date <- paste0(cpi$Year,"-",cpi$month, "-01") #assign default date to be the first of every month
+cpi <- pivot_longer(cpi, cols = Jan:Dec, names_to = "month", values_to = "CPI") # change from wide to long format
+cpi$observation_date <- paste0(cpi$Year,"-",cpi$month, "-01") # assign default date to be the first of every month
 cpi <- cpi[,c("observation_date","CPI")]
 cpi$observation_date = as.Date(cpi$observation_date, format = "%Y-%b-%d")
 
