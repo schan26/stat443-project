@@ -2,7 +2,6 @@
 ### Run ALL other scripts before running this script
 ### -------------------
 
-
 # ── Common style settings ──────────────────────────────────────────────────────
 main_cex <- 2.0
 lab_cex  <- 1.5
@@ -33,8 +32,6 @@ variogram <- function(y, lagmax = 12, iprint = FALSE) {
   list(G = G, H = H)
 }
 
-
-
 # ── Load and prepare data ──────────────────────────────────────────────────────
 data <- read.csv("data/processed/cleanedData.csv")
 data$observation_date <- as.Date(paste0(data$observation_date, "-01"))
@@ -47,7 +44,6 @@ train_data <- data[1:length(train), ]
 
 sp500_x <- na.omit(train_data$sp500_ret)
 sp500_dates <- train_data$observation_date[!is.na(train_data$sp500_ret)]
-
 
 
 # ── Time series plot ───────────────────────────────────────────────────────────
@@ -202,8 +198,6 @@ legend(
 
 dev.off()
 
-
-
 # ── ccf plots ─────────────────────────────────────────────────────────────
 if (!dir.exists("figs/ccf")) {
   dir.create("figs/ccf")
@@ -256,7 +250,6 @@ ccf(as.numeric(vix_train),as.numeric(train),
     main = "CCF of differenced VIX & SP500 returns", ylab = "CCF", xlab="Lag (Months)", 
     lag.max = 10,lwd=2) 
 dev.off()
-
 
 # ───────────────────────────────────────────────────────────────
 cat("Done. New figures saved in figs/\n")
