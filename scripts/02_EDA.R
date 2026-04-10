@@ -16,15 +16,15 @@ holdout <- window(data_ts, start = holdout_start)
 # Subset data to training period only
 train_data <- data[1:length(train),]
 
-vars <- c("CPI", "VIXCLS", "INDPRO", "Gold", "Silver")
+vars <- c("CPI", "VIXCLS", "INDPRO", "Gold", "Silver", "BAA10YM")
 
 # ── Time series plot analysis ────────────────────────────────────────────────
-par(mfrow = c(1, 1))
+par(mfrow = c(1, 1), cex.main=1,cex.lab = 1,cex.axis = 1)
 dates <- train_data$observation_date[!is.na(train_data[["sp500_ret"]])]
 plot(dates, na.omit(train_data[["sp500_ret"]]),
      type = "l", lwd = 1.5,
      xlab = "Date", ylab = "sp500_ret",
-     main = "Time Series — sp500_ret", cex.main = 1)
+     main = "Time Series — sp500_ret")
 
 abline(h = mean(na.omit(train_data[["sp500_ret"]])), col = "red", lty = 2, lwd = 1)
 
@@ -40,7 +40,7 @@ for (v in vars) {
   plot(dates, x,
        type = "l", lwd = 1.5,
        xlab = "Date", ylab = v,
-       main = paste("Time Series —", v), cex.main = 2)
+       main = paste("Time Series —", v))
   
   abline(h = mean(x), col = "red", lty = 2, lwd = 1)
 }
@@ -55,10 +55,10 @@ plot_acf_pacf <- function(var_name, df, lag.max = 36) {
   par(mfrow = c(1, 2))
   
   acf(x,  lag.max = lag.max,
-      main = paste("ACF —", var_name), cex.main = 3)
+      main = paste("ACF —", var_name))
   
   pacf(x, lag.max = lag.max,
-       main = paste("PACF —", var_name), cex.main = 3)
+       main = paste("PACF —", var_name))
 }
 
 for (v in vars) {
@@ -98,15 +98,14 @@ for (v in vars) {
           type = "b", pch = c(16, 17), 
           col = c("steelblue", "darkorange"), lwd = 2.5,
           xlab = "Lag (months)", ylab = "variogram",
-          main = paste("Variogram —", v), cex.main = 2.5)
+          main = paste("Variogram —", v))
   
   abline(h = 1, col = "black", lty = 2, lwd = 1.5)
   
   legend("bottomright",
          legend = c("G", "H"),
          col = c("steelblue", "darkorange"),
-         pch = c(16, 17), lwd = 2, bty = "n", 
-         cex = 3)
+         pch = c(16, 17), lwd = 2, bty = "n")
 }
 
 par(mfrow = c(1, 1))
