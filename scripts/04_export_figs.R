@@ -69,7 +69,7 @@ plot(
   main = "Time Series — sp500 returns"
 )
 
-abline(h = mean(sp500_x), col = "red", lty = 2, lwd = 1.2)
+abline(h = mean(sp500_x), col = "red", lty = 2, lwd = 3)
 
 dev.off()
 
@@ -87,7 +87,7 @@ plot(dates, vix_train,
      xlab = "Date", ylab = "Differenced VIX (%)",
      main = "Time Series — Differenced VIX")
 
-abline(h = mean(vix_train), col = "red", lty = 2, lwd = 1)
+abline(h = mean(vix_train), col = "red", lty = 2, lwd = 3)
 
 dev.off()
 
@@ -105,7 +105,7 @@ plot(dates, BAA_train,
      xlab = "Date", ylab = "Differenced Baa Spread (%)",
      main = "Time Series — Differenced Baa Spread")
 
-abline(h = mean(BAA_train), col = "red", lty = 2, lwd = 1)
+abline(h = mean(BAA_train), col = "red", lty = 2, lwd = 3)
 
 dev.off()
 

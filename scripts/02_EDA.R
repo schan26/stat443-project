@@ -25,7 +25,7 @@ plot(dates, na.omit(train_data[["sp500_ret"]]),
      xlab = "Date", ylab = "sp500_ret",
      main = "Time Series — sp500_ret")
 
-abline(h = mean(na.omit(train_data[["sp500_ret"]])), col = "red", lty = 2, lwd = 1)
+abline(h = mean(na.omit(train_data[["sp500_ret"]])), col = "red", lty = 2, lwd = 3)
 
 par(mfrow = c(2, 2))
 
@@ -39,7 +39,7 @@ for (v in vars) {
        xlab = "Date", ylab = v,
        main = paste("Time Series —", v))
   
-  abline(h = mean(x), col = "red", lty = 2, lwd = 1)
+  abline(h = mean(x), col = "red", lty = 2, lwd = 3)
 }
 
 par(mfrow = c(1, 1))

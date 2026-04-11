@@ -160,7 +160,7 @@ plot(dates, BAA_train,
      xlab = "Date", ylab = "Differenced Baa Spread (%)",
      main = "Time Series — Differenced Baa Spread")
 
-abline(h = mean(BAA_train), col = "red", lty = 2, lwd = 1)
+abline(h = mean(BAA_train), col = "red", lty = 2, lwd = 3)
 
 BAA_ccf <- ccf(as.numeric(BAA_train),as.numeric(train), main = "CCF of differenced Baa spread & SP500 returns", ylab = "CCF", xlab = "Lags (months)", cex.main = 1.2, lag.max = 10)
 
@@ -180,7 +180,7 @@ plot(dates, vix_train,
      xlab = "Date", ylab = "Differenced VIX (%)",
      main = "Time Series — Differenced VIX")
 
-abline(h = mean(vix_train), col = "red", lty = 2, lwd = 1)
+abline(h = mean(vix_train), col = "red", lty = 2, lwd = 3)
 
 VIX_ccf <- ccf(as.numeric(vix_train),as.numeric(train), main = "CCF of differenced VIX & SP500 returns", ylab = "CCF", xlab = "Lags (months)", cex.main = 1.2, lag.max = 10)
 
