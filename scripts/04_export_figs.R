@@ -74,6 +74,15 @@ abline(h = mean(sp500_x), col = "red", lty = 2, lwd = 1.2)
 
 dev.off()
 
+png("figs/ts/diff_vix_tsplot.png", width = 2000, height = 1300, res = 220)
+
+
+par(
+  mar = c(5.5, 5.5, 4.5, 2) + 0.1,
+  cex.main = main_cex,
+  cex.lab = lab_cex,
+  cex.axis = axis_cex
+)
 
 plot(dates, vix_train,
      type = "l", lwd = 1.5,
@@ -83,6 +92,16 @@ plot(dates, vix_train,
 abline(h = mean(vix_train), col = "red", lty = 2, lwd = 1)
 
 dev.off()
+
+png("figs/ts/diff_Baa_tsplot.png", width = 2000, height = 1300, res = 220)
+
+
+par(
+  mar = c(5.5, 5.5, 4.5, 2) + 0.1,
+  cex.main = main_cex,
+  cex.lab = lab_cex,
+  cex.axis = axis_cex
+)
 
 plot(dates, BAA_train,
      type = "l", lwd = 1.5,
