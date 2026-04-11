@@ -88,7 +88,7 @@ for (v in vars) {
   lags <- 1:12
   
   matplot(lags, cbind(vg$G, vg$H),
-          type = "p", pch = c(16, 17), cex = 1.25,
+          type = "p", pch = c(16, 17), cex = 1.4,
           col = c("steelblue", "darkorange"), lwd = 2.5,
           xlab = "Lag (Months)", ylab = "Variogram",
           main = paste("Variogram —", v))
