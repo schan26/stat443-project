@@ -1,7 +1,6 @@
 train_end   <- c(2015, 4)
 holdout_start <- c(2015, 5)
 
-
 data <- read.csv("data/processed/cleanedData.csv")
 
 # FIX: Parse "YYYY-MM" dates by appending "-01" so as.Date() can read them
@@ -28,8 +27,6 @@ plot(dates, na.omit(train_data[["sp500_ret"]]),
 
 abline(h = mean(na.omit(train_data[["sp500_ret"]])), col = "red", lty = 2, lwd = 1)
 
-
-
 par(mfrow = c(2, 2))
 
 for (v in vars) {
@@ -46,7 +43,6 @@ for (v in vars) {
 }
 
 par(mfrow = c(1, 1))
-
 
 # ── ACF/PACF analysis ────────────────────────────────────────────────
 vars <- c("sp500_ret", vars)
@@ -65,7 +61,6 @@ for (v in vars) {
   plot_acf_pacf(v, train_data)
 }
 
-
 # ── Variogram function ────────────────────────────────────────────────
 variogram <- function(y, lagmax = 10, iprint = FALSE) {
   G  <- rep(1, lagmax)
@@ -83,8 +78,6 @@ variogram <- function(y, lagmax = 10, iprint = FALSE) {
   if (iprint) print(cbind(G, H))
   list(G = G, H = H)
 }
-
-
 
 # ── Variogram analysis ────────────────────────────────────────────────
 par(mfrow = c(2, 2))
@@ -109,7 +102,6 @@ for (v in vars) {
 }
 
 par(mfrow = c(1, 1))
-
 
 # ── CCF analysis ────────────────────────────────────────────────
 indpro_diff = diff(data$INDPRO)

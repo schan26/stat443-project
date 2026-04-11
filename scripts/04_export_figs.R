@@ -45,7 +45,6 @@ train_data <- data[1:length(train), ]
 sp500_x <- na.omit(train_data$sp500_ret)
 sp500_dates <- train_data$observation_date[!is.na(train_data$sp500_ret)]
 
-
 # ── Time series plot ───────────────────────────────────────────────────────────
 if (!dir.exists("figs/ts")) {
   dir.create("figs/ts")
@@ -76,7 +75,6 @@ dev.off()
 
 png("figs/ts/diff_vix_tsplot.png", width = 2000, height = 1300, res = 220)
 
-
 par(
   mar = c(5.5, 5.5, 4.5, 2) + 0.1,
   cex.main = main_cex,
@@ -95,7 +93,6 @@ dev.off()
 
 png("figs/ts/diff_Baa_tsplot.png", width = 2000, height = 1300, res = 220)
 
-
 par(
   mar = c(5.5, 5.5, 4.5, 2) + 0.1,
   cex.main = main_cex,
@@ -111,7 +108,6 @@ plot(dates, BAA_train,
 abline(h = mean(BAA_train), col = "red", lty = 2, lwd = 1)
 
 dev.off()
-
 
 # ── ACF / PACF plot ────────────────────────────────────────────────────────────
 
@@ -147,7 +143,6 @@ pacf(
 )
 
 dev.off()
-
 
 # ── Variogram plot of S&P500 returns───────────────────────────────────────────
 if (!dir.exists("figs/vario")) {

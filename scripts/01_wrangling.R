@@ -34,7 +34,6 @@ silver$observation_date <- as.Date(silver$observation_date, format = "%m/%d/%Y")
 copper$observation_date <- as.Date(copper$observation_date, format = "%m/%d/%Y")
 BAA10Y$observation_date <- as.Date(BAA10Y$observation_date)
 
-
 # ── Forward-fill daily series ──────────────────────────────────────────────────
 vix <- fill_missing_values(vix)
 copper <- fill_missing_values(copper)
