@@ -63,4 +63,3 @@ merged_data$observation_date = format(merged_data$observation_date, "%Y-%m")
 # ── Save processed data ────────────────────────────────────────────────────────
 # Two CPI values in 2025 are missing due to the 2025 lapse in appropriations.
 write.csv(merged_data, file = "data/processed/cleanedData.csv")
-

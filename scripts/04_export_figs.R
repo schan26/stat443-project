@@ -110,7 +110,6 @@ abline(h = mean(BAA_train), col = "red", lty = 2, lwd = 1)
 dev.off()
 
 # ── ACF / PACF plot ────────────────────────────────────────────────────────────
-
 if (!dir.exists("figs/acf_pacf")) {
   dir.create("figs/acf_pacf")
 }
@@ -144,7 +143,7 @@ pacf(
 
 dev.off()
 
-# ── Variogram plot of S&P500 returns───────────────────────────────────────────
+# ── Variogram plot of S&P 500 returns───────────────────────────────────────────
 if (!dir.exists("figs/vario")) {
   dir.create("figs/vario")
 }
@@ -163,11 +162,11 @@ par(
 
 matplot(
   lags, cbind(vg$G, vg$H),
-  type = "b",
+  type = "p",
   pch = c(16, 17),
   col = c("steelblue", "darkorange"),
   lwd = 2.5,
-  xlab = "Lag (months)",
+  xlab = "Lag (Months)",
   ylab = "Variogram",
   main = "Variogram — sp500 returns"
 )
