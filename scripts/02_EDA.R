@@ -88,14 +88,14 @@ for (v in vars) {
   lags <- 1:12
   
   matplot(lags, cbind(vg$G, vg$H),
-          type = "p", pch = c(16, 17), 
+          type = "p", pch = c(16, 17), cex = 1.25,
           col = c("steelblue", "darkorange"), lwd = 2.5,
           xlab = "Lag (Months)", ylab = "Variogram",
           main = paste("Variogram —", v))
   
   abline(h = 1, col = "black", lty = 2, lwd = 1.5)
   
-  legend("bottomright",
+  legend("topleft",
          legend = c("G-hat", "H-hat"),
          col = c("steelblue", "darkorange"),
          pch = c(16, 17), lwd = 2, bty = "n")
