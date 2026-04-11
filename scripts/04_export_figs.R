@@ -148,52 +148,6 @@ pacf(
 
 dev.off()
 
-png("figs/acf_pacf/BAA_acfpacf.png", width = 2400, height = 1200, res = 220)
-par(
-  mfrow = c(1, 2),
-  mar = c(5.5, 5.5, 4.5, 2) + 0.1,
-  cex.main = 1.5,
-  cex.lab = lab_cex,
-  cex.axis = axis_cex
-)
-
-acf(as.numeric(BAA_train), 
-    lag.max = 20,
-    lwd = 2,
-    xlab = "Lag (Months)",
-    ylab = "ACF",
-    main = "ACF of differenced Baa spread")
-pacf(as.numeric(BAA_train), 
-     lag.max = 20,
-     lwd = 2,
-     xlab = "Lag (Months)",
-     ylab = " Partial ACF",
-     main = "PACF of differenced Baa spread")
-dev.off()
-
-png("figs/acf_pacf/VIX_acfpacf.png", width = 2400, height = 1200, res = 220)
-par(
-  mfrow = c(1, 2),
-  mar = c(5.5, 5.5, 4.5, 2) + 0.1,
-  cex.main = 1.5,
-  cex.lab = lab_cex,
-  cex.axis = axis_cex
-)
-
-acf(as.numeric(vix_train), 
-    main = "ACF of differenced VIX",
-    lag.max = 20,
-    lwd = 2,
-    xlab = "Lag (Months)",
-    ylab = "ACF")
-pacf(as.numeric(vix_train), 
-     main = "PACF of differenced VIX",
-     lag.max = 20,
-     lwd = 2,
-     xlab = "Lag (Months)",
-     ylab = "Partial ACF")
-dev.off()
-
 
 # ── Variogram plot of S&P500 returns───────────────────────────────────────────
 if (!dir.exists("figs/vario")) {

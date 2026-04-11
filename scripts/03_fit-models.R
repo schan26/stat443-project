@@ -164,9 +164,6 @@ abline(h = mean(BAA_train), col = "red", lty = 2, lwd = 1)
 
 BAA_ccf <- ccf(as.numeric(BAA_train),as.numeric(train), main = "CCF of differenced Baa spread & SP500 returns", ylab = "CCF", xlab = "Lags (months)", cex.main = 1.2, lag.max = 10)
 
-acf(as.numeric(BAA_train), main = "ACF of differenced Baa spread", xlab = "Lags (months)")
-pacf(as.numeric(BAA_train), main = "PACF of differenced Baa spread", xlab = "Lags (months)")
-
 BAA_model = auto.arima(BAA_train, stationary = T, seasonal = F)
 BAA_results = arima_fc(BAA_ts,length(BAA_train),c(2,0,1),c(0,0,0),"ML",BAA_model$coef,include.mean = F)
 
@@ -184,9 +181,6 @@ plot(dates, vix_train,
      main = "Time Series — Differenced VIX")
 
 abline(h = mean(vix_train), col = "red", lty = 2, lwd = 1)
-
-acf(as.numeric(vix_train), main = "ACF of differenced VIX", xlab = "lags (months)")
-pacf(as.numeric(vix_train), main = "PACF of differenced VIX", xlab = "lags (months)")
 
 VIX_ccf <- ccf(as.numeric(vix_train),as.numeric(train), main = "CCF of differenced VIX & SP500 returns", ylab = "CCF", xlab = "Lags (months)", cex.main = 1.2, lag.max = 10)
 
