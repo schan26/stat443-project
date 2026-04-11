@@ -155,6 +155,13 @@ BAA_ts = ts(diff(data$BAA10YM), start = data_start, frequency = 12)
 BAA_train = window(BAA_ts, start = data_start, end = train_end)
 BAA_holdout = window(BAA_ts, start = holdout_start)
 
+plot(dates, BAA_train,
+     type = "l", lwd = 1.5,
+     xlab = "Date", ylab = "Differenced Baa Spread (%)",
+     main = "Time Series — Differenced Baa Spread")
+
+abline(h = mean(BAA_train), col = "red", lty = 2, lwd = 1)
+
 BAA_ccf <- ccf(as.numeric(BAA_train),as.numeric(train), main = "CCF of differenced Baa spread & SP500 returns", ylab = "CCF", xlab = "Lags (months)", cex.main = 1.2, lag.max = 10)
 
 acf(as.numeric(BAA_train), main = "ACF of differenced Baa spread", xlab = "Lags (months)")
@@ -170,6 +177,13 @@ vix_ts = ts(diff(data$VIXCLS), start = data_start, frequency = 12)
 
 vix_train = window(vix_ts, start = data_start, end = train_end)
 vix_holdout = window(vix_ts, start = holdout_start)
+
+plot(dates, vix_train,
+     type = "l", lwd = 1.5,
+     xlab = "Date", ylab = "Differenced VIX (%)",
+     main = "Time Series — Differenced VIX")
+
+abline(h = mean(vix_train), col = "red", lty = 2, lwd = 1)
 
 acf(as.numeric(vix_train), main = "ACF of differenced VIX", xlab = "lags (months)")
 pacf(as.numeric(vix_train), main = "PACF of differenced VIX", xlab = "lags (months)")

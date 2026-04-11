@@ -74,6 +74,26 @@ abline(h = mean(sp500_x), col = "red", lty = 2, lwd = 1.2)
 
 dev.off()
 
+
+plot(dates, vix_train,
+     type = "l", lwd = 1.5,
+     xlab = "Date", ylab = "Differenced VIX (%)",
+     main = "Time Series — Differenced VIX")
+
+abline(h = mean(vix_train), col = "red", lty = 2, lwd = 1)
+
+dev.off()
+
+plot(dates, BAA_train,
+     type = "l", lwd = 1.5,
+     xlab = "Date", ylab = "Differenced Baa Spread (%)",
+     main = "Time Series — Differenced Baa Spread")
+
+abline(h = mean(BAA_train), col = "red", lty = 2, lwd = 1)
+
+dev.off()
+
+
 # ── ACF / PACF plot ────────────────────────────────────────────────────────────
 
 if (!dir.exists("figs/acf_pacf")) {
